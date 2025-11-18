@@ -1,60 +1,185 @@
-[00:00:00.830] Server  LOG      ✓ Ready in 561ms
-[00:04:09.507] Server  ERROR    ⨯ ./pages/api/spatial-id.js:1:1
-Module not found: Can't resolve 'ouranos-gex-lib-for-javascript'
-> 1 | import { Space } from 'ouranos-gex-lib-for-javascript';
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  2 |
-  3 | export default function handler(req, res) {
-  4 |   const { lat, lon, zoom = '25', alt } = req.query;
+[00:00:00.852] Server  LOG     It looks like you're trying to use TypeScript but do not have the required package(s) installed.
+Installing dependencies
+
+If you are not trying to use TypeScript, please remove the tsconfig.json file from your package root (and any TypeScript files in your app and pages directories).
+
+[00:00:00.866] Server  LOG     
+[00:00:00.866] Server  LOG     Installing devDependencies (npm):
+[00:00:00.866] Server  LOG     - @types/react
+[00:00:00.866] Server  LOG     
+[00:00:01.825] Server  LOG     
+[00:00:01.835] Server  LOG     
+[00:00:01.835] Server  LOG        We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+[00:00:01.835] Server  LOG        The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+[00:00:01.836] Server  LOG        	- lib was set to dom,dom.iterable,esnext
+[00:00:01.836] Server  LOG        	- allowJs was set to true
+[00:00:01.836] Server  LOG        	- noEmit was set to true
+[00:00:01.836] Server  LOG        	- incremental was set to true
+[00:00:01.836] Server  LOG        	- include was set to ['next-env.d.ts', '**/*.mts', '**/*.ts', '**/*.tsx']
+[00:00:01.836] Server  LOG        	- exclude was set to ['node_modules']
+[00:00:01.837] Server  LOG     
+[00:00:01.837] Server  LOG        The following mandatory changes were made to your tsconfig.json:
+
+[00:00:01.837] Server  LOG        	- esModuleInterop was set to true (requirement for SWC / babel)
+[00:00:01.837] Server  LOG        	- moduleResolution was set to node (to match webpack resolution)
+[00:00:01.838] Server  LOG        	- resolveJsonModule was set to true (to match webpack resolution)
+[00:00:01.838] Server  LOG     
+[00:00:02.018] Server  LOG      ✓ Ready in 1669ms
+[00:00:46.211] Server  ERROR    ⨯ ./lib/ouranos-gex-lib-for-javascript/index.ts:4:1
+Module not found: Can't resolve '@turf/bbox'
+  2 | import { calculateZFXY, getBBox, getChildren, getFloor, getParent, isZFXYTile, parseZFXYString, ZFXYTile, zfxyWraparound, getSurrounding, getCenterLngLatAlt } from "./zfxy";
+  3 | import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
+> 4 | import turfBBox from '@turf/bbox';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import turfBooleanIntersects from '@turf/boolean-intersects';
+  6 | import type { Geometry, Polygon } from "geojson";
+  7 | import { bboxToTile, pointToTile } from "./tilebelt";
 
 
+
+Import trace:
+  Route:
+    ./lib/ouranos-gex-lib-for-javascript/index.ts
+    ./pages/api/spatial-id.ts
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./lib/ouranos-gex-lib-for-javascript/index.ts:5:1
+Module not found: Can't resolve '@turf/boolean-intersects'
+  3 | import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
+  4 | import turfBBox from '@turf/bbox';
+> 5 | import turfBooleanIntersects from '@turf/boolean-intersects';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Geometry, Polygon } from "geojson";
+  7 | import { bboxToTile, pointToTile } from "./tilebelt";
+  8 |
+
+
+
+Import trace:
+  Route:
+    ./lib/ouranos-gex-lib-for-javascript/index.ts
+    ./pages/api/spatial-id.ts
 
 https://nextjs.org/docs/messages/module-not-found
 
 
-[00:04:13.703] Browser ERROR   uncaughtError: Error: ./pages/api/spatial-id.js:1:1
-Module not found: Can't resolve 'ouranos-gex-lib-for-javascript'
-> 1 | import { Space } from 'ouranos-gex-lib-for-javascript';
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  2 |
-  3 | export default function handler(req, res) {
-  4 |   const { lat, lon, zoom = '25', alt } = req.query;
+[00:00:49.055] Browser ERROR   uncaughtError: Error: ./lib/ouranos-gex-lib-for-javascript/index.ts:4:1
+Module not found: Can't resolve '@turf/bbox'
+  2 | import { calculateZFXY, getBBox, getChildren, getFloor, getParent, isZFXYTile, parseZFXYString, ZFXYTile, zfxyWraparound, getSurrounding, getCenterLngLatAlt } from "./zfxy";
+  3 | import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
+> 4 | import turfBBox from '@turf/bbox';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import turfBooleanIntersects from '@turf/boolean-intersects';
+  6 | import type { Geometry, Polygon } from "geojson";
+  7 | import { bboxToTile, pointToTile } from "./tilebelt";
 
 
 
-https://nextjs.org/docs/messages/module-not-found
-
-
-[00:04:13.818] Browser ERROR   ./pages/api/spatial-id.js:1:1
-Module not found: Can't resolve 'ouranos-gex-lib-for-javascript'
-> 1 | import { Space } from 'ouranos-gex-lib-for-javascript';
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  2 |
-  3 | export default function handler(req, res) {
-  4 |   const { lat, lon, zoom = '25', alt } = req.query;
+Import trace:
+  Route:
+    ./lib/ouranos-gex-lib-for-javascript/index.ts
+    ./pages/api/spatial-id.ts
 
 https://nextjs.org/docs/messages/module-not-found
-[00:04:13.958] Browser ERROR   ./pages/api/spatial-id.js:1:1
-Module not found: Can't resolve 'ouranos-gex-lib-for-javascript'
-> 1 | import { Space } from 'ouranos-gex-lib-for-javascript';
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  2 |
-  3 | export default function handler(req, res) {
-  4 |   const { lat, lon, zoom = '25', alt } = req.query;
+
+
+[00:00:49.185] Browser ERROR   ./lib/ouranos-gex-lib-for-javascript/index.ts:4:1
+Module not found: Can't resolve '@turf/bbox'
+  2 | import { calculateZFXY, getBBox, getChildren, getFloor, getParent, isZFXYTile, parseZFXYString, ZFXYTile, zfxyWraparound, getSurrounding, getCenterLngLatAlt } from "./zfxy";
+  3 | import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
+> 4 | import turfBBox from '@turf/bbox';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import turfBooleanIntersects from '@turf/boolean-intersects';
+  6 | import type { Geometry, Polygon } from "geojson";
+  7 | import { bboxToTile, pointToTile } from "./tilebelt";
+
+Import trace:
+  Route:
+    ./lib/ouranos-gex-lib-for-javascript/index.ts
+    ./pages/api/spatial-id.ts
 
 https://nextjs.org/docs/messages/module-not-found
-[00:04:14.082] Browser ERROR   ./pages/api/spatial-id.js:1:1
-Module not found: Can't resolve 'ouranos-gex-lib-for-javascript'
-> 1 | import { Space } from 'ouranos-gex-lib-for-javascript';
-    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  2 |
-  3 | export default function handler(req, res) {
-  4 |   const { lat, lon, zoom = '25', alt } = req.query;
+[00:00:49.185] Browser ERROR   ./lib/ouranos-gex-lib-for-javascript/index.ts:5:1
+Module not found: Can't resolve '@turf/boolean-intersects'
+  3 | import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
+  4 | import turfBBox from '@turf/bbox';
+> 5 | import turfBooleanIntersects from '@turf/boolean-intersects';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Geometry, Polygon } from "geojson";
+  7 | import { bboxToTile, pointToTile } from "./tilebelt";
+  8 |
+
+Import trace:
+  Route:
+    ./lib/ouranos-gex-lib-for-javascript/index.ts
+    ./pages/api/spatial-id.ts
 
 https://nextjs.org/docs/messages/module-not-found
-[00:05:26.739] Server  LOG     
-[00:05:26.739] Server  LOG     Could not open spatial-id.js in the editor.
-[00:05:26.739] Server  LOG     The editor process exited with an error: Terminal editors can only be used on macOS.
-[00:05:26.739] Server  LOG     
-[00:05:26.740] Server  LOG     To set up the editor integration, add something like REACT_EDITOR=atom to the .env.local file in your project folder and restart the development server.
-[00:05:26.740] Server  LOG     
+[00:00:49.332] Browser ERROR   ./lib/ouranos-gex-lib-for-javascript/index.ts:4:1
+Module not found: Can't resolve '@turf/bbox'
+  2 | import { calculateZFXY, getBBox, getChildren, getFloor, getParent, isZFXYTile, parseZFXYString, ZFXYTile, zfxyWraparound, getSurrounding, getCenterLngLatAlt } from "./zfxy";
+  3 | import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
+> 4 | import turfBBox from '@turf/bbox';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import turfBooleanIntersects from '@turf/boolean-intersects';
+  6 | import type { Geometry, Polygon } from "geojson";
+  7 | import { bboxToTile, pointToTile } from "./tilebelt";
+
+Import trace:
+  Route:
+    ./lib/ouranos-gex-lib-for-javascript/index.ts
+    ./pages/api/spatial-id.ts
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:49.332] Browser ERROR   ./lib/ouranos-gex-lib-for-javascript/index.ts:5:1
+Module not found: Can't resolve '@turf/boolean-intersects'
+  3 | import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
+  4 | import turfBBox from '@turf/bbox';
+> 5 | import turfBooleanIntersects from '@turf/boolean-intersects';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Geometry, Polygon } from "geojson";
+  7 | import { bboxToTile, pointToTile } from "./tilebelt";
+  8 |
+
+Import trace:
+  Route:
+    ./lib/ouranos-gex-lib-for-javascript/index.ts
+    ./pages/api/spatial-id.ts
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:49.466] Browser ERROR   ./lib/ouranos-gex-lib-for-javascript/index.ts:4:1
+Module not found: Can't resolve '@turf/bbox'
+  2 | import { calculateZFXY, getBBox, getChildren, getFloor, getParent, isZFXYTile, parseZFXYString, ZFXYTile, zfxyWraparound, getSurrounding, getCenterLngLatAlt } from "./zfxy";
+  3 | import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
+> 4 | import turfBBox from '@turf/bbox';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import turfBooleanIntersects from '@turf/boolean-intersects';
+  6 | import type { Geometry, Polygon } from "geojson";
+  7 | import { bboxToTile, pointToTile } from "./tilebelt";
+
+Import trace:
+  Route:
+    ./lib/ouranos-gex-lib-for-javascript/index.ts
+    ./pages/api/spatial-id.ts
+
+https://nextjs.org/docs/messages/module-not-found
+[00:00:49.466] Browser ERROR   ./lib/ouranos-gex-lib-for-javascript/index.ts:5:1
+Module not found: Can't resolve '@turf/boolean-intersects'
+  3 | import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
+  4 | import turfBBox from '@turf/bbox';
+> 5 | import turfBooleanIntersects from '@turf/boolean-intersects';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  6 | import type { Geometry, Polygon } from "geojson";
+  7 | import { bboxToTile, pointToTile } from "./tilebelt";
+  8 |
+
+Import trace:
+  Route:
+    ./lib/ouranos-gex-lib-for-javascript/index.ts
+    ./pages/api/spatial-id.ts
+
+https://nextjs.org/docs/messages/module-not-found
