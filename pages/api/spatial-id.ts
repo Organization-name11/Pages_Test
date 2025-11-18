@@ -1,4 +1,4 @@
-import { Space } from 'ouranos-gex-lib-for-javascript';
+import { Space } from '../../lib/ouranos-gex-lib-for-javascript/index';
 
 export default function handler(req, res) {
   const { lat, lon, zoom = '25', alt } = req.query;
