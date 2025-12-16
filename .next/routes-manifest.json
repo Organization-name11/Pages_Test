@@ -2,8 +2,17 @@
   "version": 3,
   "pages404": true,
   "caseSensitive": false,
-  "basePath": "",
+  "basePath": "/Pages_Test",
   "redirects": [
+    {
+      "source": "/Pages_Test/",
+      "destination": "/Pages_Test",
+      "basePath": false,
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^/Pages_Test/$"
+    },
     {
       "source": "/:path+/",
       "destination": "/:path+",
@@ -15,7 +24,13 @@
   ],
   "headers": [],
   "rewrites": {
-    "beforeFiles": [],
+    "beforeFiles": [
+      {
+        "source": "/Pages_Test//_next/:path+",
+        "destination": "/Pages_Test/_next/:path+",
+        "regex": "^/Pages_Test//_next(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))(?:/)?$"
+      }
+    ],
     "afterFiles": [],
     "fallback": []
   },

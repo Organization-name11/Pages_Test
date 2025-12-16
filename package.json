@@ -1,12 +1,16 @@
+
 {
   "name": "test_spatialid_api_demo",
   "version": "1.0.0",
   "description": "",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "predeploy": "next build",
+    "deploy": "gh-pages -d out"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +27,7 @@
   "devDependencies": {
     "@types/node": "^24.10.1",
     "@types/react": "19.2.6",
+    "gh-pages": "^6.3.0",
     "typescript": "^5.9.3"
   }
 }
