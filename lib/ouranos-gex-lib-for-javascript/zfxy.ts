@@ -1,4 +1,5 @@
-import { LngLat, LngLatWithAltitude } from "./types";
+
+import type { LngLat, LngLatWithAltitude } from "./types";
 
 export type ZFXYTile = { z: number, f: number, x: number, y: number };
 
@@ -12,61 +13,80 @@ export const ZFXY_ROOT_TILE: ZFXYTile = { f: 0, x: 0, y: 0, z: 0 };
 const rad2deg = 180 / Math.PI;
 
 export function getParent(tile: ZFXYTile, steps: number = 1): ZFXYTile {
-  const { f,x,y,z } = tile;
+  const { f, x, y, z } = tile;
   if (steps <= 0) {
     throw new Error('steps must be greater than 0');
   }
   if (steps > z) {
-    throw new Error(`Getting parent tile of ${tile}, ${steps} steps is not possible because it would go beyond the root tile (z=0)`);
+    throw new Error(`Getting parent tile of ${JSON.stringify(tile)}, ${steps} steps is not possible because it would go beyond the root tile (z=0)`);
   }
   return {
     f: f >> steps,
     x: x >> steps,
     y: y >> steps,
-    z: z -  steps,
+    z: z - steps,
   };
 }
 
 export function getChildren(tile: ZFXYTile = ZFXY_ROOT_TILE): ZFXYTile[] {
-  const {f,x,y,z} = tile;
+  const { f, x, y, z } = tile;
   return [
-    {f: f * 2,     x: x * 2,     y: y * 2,     z: z+1}, // f +0, x +0, y +0
-    {f: f * 2,     x: x * 2 + 1, y: y * 2,     z: z+1}, // f +0, x +1, y +0
-    {f: f * 2,     x: x * 2,     y: y * 2 + 1, z: z+1}, // f +0, x +0, y +1
-    {f: f * 2,     x: x * 2 + 1, y: y * 2 + 1, z: z+1}, // f +0, x +1, y +1
-    {f: f * 2 + 1, x: x * 2,     y: y * 2,     z: z+1}, // f +1, x +0, y +0
-    {f: f * 2 + 1, x: x * 2 + 1, y: y * 2,     z: z+1}, // f +1, x +1, y +0
-    {f: f * 2 + 1, x: x * 2,     y: y * 2 + 1, z: z+1}, // f +1, x +0, y +1
-    {f: f * 2 + 1, x: x * 2 + 1, y: y * 2 + 1, z: z+1}, // f +1, x +1, y +1
+    { f: f * 2,     x: x * 2,     y: y * 2,     z: z + 1 }, // f +0, x +0, y +0
+    { f: f * 2,     x: x * 2 + 1, y: y * 2,     z: z + 1 }, // f +0, x +1, y +0
+    { f: f * 2,     x: x * 2,     y: y * 2 + 1, z: z + 1 }, // f +0, x +0, y +1
+    { f: f * 2,     x: x * 2 + 1, y: y * 2 + 1, z: z + 1 }, // f +0, x +1, y +1
+    { f: f * 2 + 1, x: x * 2,     y: y * 2,     z: z + 1 }, // f +1, x +0, y +0
+    { f: f * 2 + 1, x: x * 2 + 1, y: y * 2,     z: z + 1 }, // f +1, x +1, y +0
+    { f: f * 2 + 1, x: x * 2,     y: y * 2 + 1, z: z + 1 }, // f +1, x +0, y +1
+    { f: f * 2 + 1, x: x * 2 + 1, y: y * 2 + 1, z: z + 1 }, // f +1, x +1, y +1
   ];
 }
 
 export function getSurrounding(tile: ZFXYTile = ZFXY_ROOT_TILE): ZFXYTile[] {
-  const {f,x,y,z} = tile;
+  const { f, x, y, z } = tile;
   return [
-    zfxyWraparound({f: f, x: x,     y: y,     z: z}), // f +0, x +0, y +0
-    zfxyWraparound({f: f, x: x + 1, y: y,     z: z}), // f +0, x +1, y +0
-    zfxyWraparound({f: f, x: x,     y: y + 1, z: z}), // f +0, x +0, y +1
-    zfxyWraparound({f: f, x: x + 1, y: y + 1, z: z}), // f +0, x +1, y +1
-    zfxyWraparound({f: f, x: x - 1, y: y,     z: z}), // f +0, x -1, y +0
-    zfxyWraparound({f: f, x: x,     y: y - 1, z: z}), // f +0, x +0, y -1
-    zfxyWraparound({f: f, x: x - 1, y: y - 1, z: z}), // f +0, x -1, y -1
-    zfxyWraparound({f: f, x: x + 1, y: y - 1, z: z}), // f +0, x +1, y -1
-    zfxyWraparound({f: f, x: x - 1, y: y + 1, z: z}), // f +0, x -1, y +1
+    zfxyWraparound({ f: f, x: x,     y: y,     z: z }), // f +0, x +0, y +0
+    zfxyWraparound({ f: f, x: x + 1, y: y,     z: z }), // f +0, x +1, y +0
+    zfxyWraparound({ f: f, x: x,     y: y + 1, z: z }), // f +0, x +0, y +1
+    zfxyWraparound({ f: f, x: x + 1, y: y + 1, z: z }), // f +0, x +1, y +1
+    zfxyWraparound({ f: f, x: x - 1, y: y,     z: z }), // f +0, x -1, y +0
+    zfxyWraparound({ f: f, x: x,     y: y - 1, z: z }), // f +0, x +0, y -1
+    zfxyWraparound({ f: f, x: x - 1, y: y - 1, z: z }), // f +0, x -1, y -1
+    zfxyWraparound({ f: f, x: x + 1, y: y - 1, z: z }), // f +0, x +1, y -1
+    zfxyWraparound({ f: f, x: x - 1, y: y + 1, z: z }), // f +0, x -1, y +1
   ];
 }
 
+/**
+ * Parse a string like '/z/f/x/y' or 'z/f/x/y'
+ */
 export function parseZFXYString(str: string): ZFXYTile | undefined {
+  // 先頭の '/' の有無を許容し、f は省略可能
   const match = str.match(/^\/?(\d+)\/(?:(\d+)\/)?(\d+)\/(\d+)$/);
   if (!match) {
     return undefined;
   }
-  return {
-    z: parseInt(match[1], 10),
-    f: parseInt(match[2] || '0', 10),
-    x: parseInt(match[3], 10),
-    y: parseInt(match[4], 10),
-  };
+  // noUncheckedIndexedAccess のため、各要素を型安全に取り出す
+  const zStr = match[1] ?? '';
+  const fStr = match[2] ?? '0';
+  const xStr = match[3] ?? '';
+  const yStr = match[4] ?? '';
+
+  // 空文字の場合は parseInt が NaN になるため、事前検証
+  if (zStr === '' || xStr === '' || yStr === '') {
+    return undefined;
+  }
+
+  const z = parseInt(zStr, 10);
+  const f = parseInt(fStr, 10);
+  const x = parseInt(xStr, 10);
+  const y = parseInt(yStr, 10);
+
+  if ([z, f, x, y].some(n => Number.isNaN(n))) {
+    return undefined;
+  }
+
+  return { z, f, x, y };
 }
 
 /** Returns the lng,lat of the northwest corner of the provided tile */
@@ -74,7 +94,7 @@ export function getLngLat(tile: ZFXYTile): LngLat {
   const n = Math.PI - 2 * Math.PI * tile.y / Math.pow(2, tile.z);
   return {
     lng: tile.x / Math.pow(2, tile.z) * 360 - 180,
-    lat: rad2deg * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n))),
+    lat: rad2deg * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)) ),
   };
 }
 
@@ -82,37 +102,37 @@ export function getCenterLngLat(tile: ZFXYTile): LngLat {
   const x = tile.x * 2 + 1,
         y = tile.y * 2 + 1,
         z = tile.z + 1;
-  return getLngLat({x, y, z, f: 0});
+  return getLngLat({ x, y, z, f: 0 });
 }
 
 export function getCenterLngLatAlt(tile: ZFXYTile): LngLatWithAltitude {
   return {
     ...getCenterLngLat(tile),
-    alt: getFloor(tile) + ((2**ZFXY_1M_ZOOM_BASE) / (2**(tile.z + 1))),
+    alt: getFloor(tile) + ((2 ** ZFXY_1M_ZOOM_BASE) / (2 ** (tile.z + 1))),
   };
 }
 
 export function getBBox(tile: ZFXYTile): [LngLat, LngLat] {
-  const nw = getLngLat(tile),
-        se = getLngLat({...tile, y: tile.y + 1, x: tile.x + 1});
-  return [ nw, se ];
+  const nw = getLngLat(tile);
+  const se = getLngLat({ ...tile, y: tile.y + 1, x: tile.x + 1 });
+  return [nw, se];
 }
 
 /** Returns the floor of the voxel, in meters */
 export function getFloor(tile: ZFXYTile): number {
-  return tile.f * (2**ZFXY_1M_ZOOM_BASE) / (2**tile.z)
+  return tile.f * (2 ** ZFXY_1M_ZOOM_BASE) / (2 ** tile.z);
 }
 
 export interface CalculateZFXYInput {
-  lat: number
-  lng: number
-  alt?: number
-  zoom: number
+  lat: number;
+  lng: number;
+  alt?: number;
+  zoom: number;
 }
 
 export function calculateZFXY(input: CalculateZFXYInput): ZFXYTile {
   const meters = typeof input.alt !== 'undefined' ? input.alt : 0;
-  if (meters <= -(2**ZFXY_1M_ZOOM_BASE) || meters >= (2**ZFXY_1M_ZOOM_BASE)) {
+  if (meters <= -(2 ** ZFXY_1M_ZOOM_BASE) || meters >= (2 ** ZFXY_1M_ZOOM_BASE)) {
     // TODO: make altitude unlimited?
     throw new Error(`ZFXY only supports altitude between -2^${ZFXY_1M_ZOOM_BASE} and +2^${ZFXY_1M_ZOOM_BASE}.`);
   }
@@ -143,11 +163,11 @@ export function calculateZFXY(input: CalculateZFXYInput): ZFXYTile {
  * for the f coordinate: limiting to maximum or minimum.
  */
 export function zfxyWraparound(tile: ZFXYTile): ZFXYTile {
-  const {z, f, x, y} = tile;
+  const { z, f, x, y } = tile;
   return {
     z,
-    f: Math.max(Math.min(f, (2**z)), -(2**z)),
-    x: (x < 0) ? x + 2**z : x % 2**z,
-    y: (y < 0) ? y + 2**z : y % 2**z,
-  }
+    f: Math.max(Math.min(f, (2 ** z)), -(2 ** z)),
+    x: (x < 0) ? x    x:: (x < 0) ? x + 2 ** z : x % (2 ** z),
+    y: (y < 0) ? y + 2 ** z : y % (2 ** z),
+  };
 }

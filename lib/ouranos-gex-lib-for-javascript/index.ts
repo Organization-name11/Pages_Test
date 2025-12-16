@@ -1,5 +1,10 @@
 
+// 型のみ（runtime では参照しない） → import type
 import type { LngLatWithAltitude } from "./types";
+import type { ZFXYTile } from "./zfxy";
+import type { Geometry, Polygon, Position } from "geojson";
+
+// 値（関数／定数など、runtime で使う） → 通常の import
 import {
   calculateZFXY,
   getBBox,
@@ -8,15 +13,17 @@ import {
   getParent,
   isZFXYTile,
   parseZFXYString,
-  zfxyWraparound,
+  zfxyWraparound,        // ← 値（関数）。type ではなく通常 import
   getSurrounding,
   getCenterLngLatAlt
 } from "./zfxy";
-import type { ZFXYTile } from "./zfxy"; // 型は type-only import に分離
+
 import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
-import turfBBox from '@turf/bbox';
-import turfBooleanIntersects from '@turf/boolean-intersects';
-import type { Geometry, Polygon, Position } from "geojson";
+
+// Turf は値（関数）なので通常の import（@turf/* は default export を提供）
+import turfBBox from "@turf/bbox";
+import turfBooleanIntersects from "@turf/boolean-intersects";
+
 import { bboxToTile, pointToTile } from "./tilebelt";
 
 const DEFAULT_ZOOM = 25 as const;
