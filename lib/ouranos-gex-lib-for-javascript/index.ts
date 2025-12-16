@@ -1,10 +1,24 @@
+
 import type { LngLatWithAltitude } from "./types";
-import { calculateZFXY, getBBox, getChildren, getFloor, getParent, isZFXYTile, parseZFXYString, ZFXYTile, zfxyWraparound, getSurrounding, getCenterLngLatAlt } from "./zfxy";
+import {
+  calculateZFXY,
+  getBBox,
+  getChildren,
+  getFloor,
+  getParent,
+  isZFXYTile,
+  parseZFXYString,
+  zfxyWraparound,
+  getSurrounding,
+  getCenterLngLatAlt
+} from "./zfxy";
+import type { ZFXYTile } from "./zfxy"; // ← 型は type-only import に分離
 import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
 import turfBBox from '@turf/bbox';
 import turfBooleanIntersects from '@turf/boolean-intersects';
 import type { Geometry, Polygon } from "geojson";
 import { bboxToTile, pointToTile } from "./tilebelt";
+
 
 const DEFAULT_ZOOM = 25 as const;
 
