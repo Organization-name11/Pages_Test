@@ -147,7 +147,7 @@ export function calculateZFXY(input: CalculateZFXYInput): ZFXYTile {
 
   // Wrap Tile X
   x = x % z2;
-  if (x < 0) x = x + z2;
+ if (x < 0) x = x + z2;
 
   return {
     f: f,
@@ -162,12 +162,14 @@ export function calculateZFXY(input: CalculateZFXYInput): ZFXYTile {
  * for the x and y coordinates: wrapping the coordinates around.
  * for the f coordinate: limiting to maximum or minimum.
  */
+
+
 export function zfxyWraparound(tile: ZFXYTile): ZFXYTile {
   const { z, f, x, y } = tile;
-  return {
+   return {
     z,
-    f: Math.max(Math.min(f, (2 ** z)), -(2 ** z)),
-    x: (x < 0) ? x    x:: (x < 0) ? x + 2 ** z : x % (2 ** z),
+    f: Math.max(Math.min(f, 2 ** z), -(2 ** z)),
+    x: (x < 0) ? x + 2 ** z : x % (2 ** z),
     y: (y < 0) ? y + 2 ** z : y % (2 ** z),
   };
 }
