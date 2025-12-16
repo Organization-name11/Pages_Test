@@ -1,4 +1,4 @@
-import { LngLatWithAltitude } from "./types";
+import type { LngLatWithAltitude } from "./types";
 import { calculateZFXY, getBBox, getChildren, getFloor, getParent, isZFXYTile, parseZFXYString, ZFXYTile, zfxyWraparound, getSurrounding, getCenterLngLatAlt } from "./zfxy";
 import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
 import turfBBox from '@turf/bbox';
