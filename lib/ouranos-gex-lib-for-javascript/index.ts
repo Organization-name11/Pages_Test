@@ -16,10 +16,67 @@ import type { ZFXYTile } from "./zfxy"; // 型は type-only import に分離
 import { generateTilehash, parseZFXYTilehash } from "./zfxy_tilehash";
 import turfBBox from '@turf/bbox';
 import turfBooleanIntersects from '@turf/boolean-intersects';
-import type { Geometry, Polygon } from "geojson";
+import type { Geometry, Polygon, Position } from "geojson";
 import { bboxToTile, pointToTile } from "./tilebelt";
 
 const DEFAULT_ZOOM = 25 as const;
+
+/* ------------------------------------------------------------------ */
+/* 数値保証ヘルパー                                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * 値が number であることを保証（undefined の場合はエラー）
+ */
+function assertNumber(v: unknown, name: string): number {
+  if (typeof v !== "number" || Number.isNaN(v)) {
+    throw new Error(`Expected number for '${name}', got ${String(v)}`);
+  }
+  return v;
+}
+
+/**
+ * getBBox の戻り値を [minX, minY, maxX, maxY] に正規化する
+ * サポートする形式:
+ * - [number, number, number, number]
+ * - [LngLatLike, LngLatLike] （min/max の 2点: {lng, lat} or [lng, lat]）
+ */
+function normalizeBBoxToNumbers(
+  b: unknown
+): [number, number, number, number] {
+  if (
+    Array.isArray(b) &&
+    b.length === 4 &&
+    b.every((v) => typeof v === "number")
+  ) {
+    // すでに [minX, minY, maxX, maxY]
+    return b as [number, number, number, number];
+  }
+
+  if (Array.isArray(b) && b.length === 2) {
+    const min = b[0] as any;
+    const max = b[1] as any;
+
+    // LngLat ライクに対応
+    const minX = (typeof min?.lng === "number") ? min.lng
+               : (Array.isArray(min) ? min[0] : undefined);
+    const minY = (typeof min?.lat === "number") ? min.lat
+               : (Array.isArray(min) ? min[1] : undefined);
+    const maxX = (typeof max?.lng === "number") ? max.lng
+               : (Array.isArray(max) ? max[0] : undefined);
+    const maxY = (typeof max?.lat === "number") ? max.lat
+               : (Array.isArray(max) ? max[1] : undefined);
+
+    return [
+      assertNumber(minX, "bbox.minX"),
+      assertNumber(minY, "bbox.minY"),
+      assertNumber(maxX, "bbox.maxX"),
+      assertNumber(maxY, "bbox.maxY"),
+    ];
+  }
+
+  throw new Error("Unsupported BBox format returned by getBBox()");
+}
 
 export class Space {
   center!: LngLatWithAltitude;
@@ -54,10 +111,9 @@ export class Space {
       this._regenerateAttributesFromZFXY();
       return;
     } else {
-      this.zfxy = calculateZFXY({
-        ...input,
-        zoom: (typeof zoom !== 'undefined') ? zoom : DEFAULT_ZOOM,
-      });
+      // LngLatWithAltitude から計算
+      const z = (typeof zoom !== 'undefined') ? zoom : DEFAULT_ZOOM;
+      this.zfxy = calculateZFXY({ ...input, zoom: z });
     }
 
     this._regenerateAttributesFromZFXY();
@@ -91,18 +147,20 @@ export class Space {
 
   move(by: Partial<Omit<ZFXYTile, 'z'>>) {
     const newSpace = new Space(this.zfxy);
-    newSpace.zfxy = zfxyWraparound({
-      z: newSpace.zfxy.z,
-      f: newSpace.zfxy.f + (by.f || 0),
-      x: newSpace.zfxy.x + (by.x || 0),
-      y: newSpace.zfxy.y + (by.y || 0),
-    });
+    const z = assertNumber(newSpace.zfxy.z, "zfxy.z");
+    const f = assertNumber(newSpace.zfxy.f, "zfxy.f") + (by.f ?? 0);
+    const x = assertNumber(newSpace.zfxy.x, "zfxy.x") + (by.x ?? 0);
+    const y = assertNumber(newSpace.zfxy.y, "zfxy.y") + (by.y ?? 0);
+
+    newSpace.zfxy = zfxyWraparound({ z, f, x, y });
     newSpace._regenerateAttributesFromZFXY();
     return newSpace;
   }
 
   parent(atZoom?: number) {
-    const steps = (typeof atZoom === 'undefined') ? 1 : this.zfxy.z - atZoom;
+    const steps = (typeof atZoom === 'undefined')
+      ? 1
+      : assertNumber(this.zfxy.z, "zfxy.z") - assertNumber(atZoom, "atZoom");
     return new Space(getParent(this.zfxy, steps));
   }
 
@@ -132,24 +190,24 @@ export class Space {
   }
 
   /**
-   * 現在の ZFXY タイルの GeoJSON Polygon を返す（必要なら）
-   * getBBox の返り値仕様に合わせてください。
+   * 現在の ZFXY タイルの GeoJSON Polygon を返す
+   * - GeoJSON Position は [lng, lat]（または [lng, lat, alt]）の数値配列
+   * - getBBox の戻り値形式差異を吸収してから生成
    */
   toPolygon(): Polygon {
-    const bbox = getBBox(this.zfxy); // [minX, minY, maxX, maxY] の想定
-    const [minX, minY, maxX, maxY] = bbox;
-    const coordinates = [
-      [
-        [minX, minY],
-        [maxX, minY],
-        [maxX, maxY],
-        [minX, maxY],
-        [minX, minY],
-      ]
+    const bboxUnknown = getBBox(this.zfxy);
+    const [minX, minY, maxX, maxY] = normalizeBBoxToNumbers(bboxUnknown);
+
+    const ring: Position[] = [
+      [minX, minY],
+      [maxX, minY],
+      [maxX, maxY],
+      [minX, maxY],
+      [minX, minY],
     ];
     return {
       type: "Polygon",
-      coordinates,
+      coordinates: [ring],
     };
   }
 
@@ -162,13 +220,17 @@ export class Space {
   }
 
   /**
-   * 与えられた Geometry の bbox とこの Space の bbox が交差する近傍タイル群を返す（例）
-   * 利用ケースにあわせてチューニングしてください。
+   * 与えられた Geometry の bbox とこの Space の近傍タイル群のうち交差するものを返す（例）
    */
   intersectingNeighbors(geometry: Geometry): Space[] {
     const targetBBox = turfBBox(geometry); // [minX, minY, maxX, maxY]
-    const repTile = bboxToTile(targetBBox);
-    const repSpace = new Space({ z: this.zfxy.z, f: this.zfxy.f, x: repTile[0], y: repTile[1] });
+    const repTile = bboxToTile(targetBBox); // 想定: [x, y, z?]
+    const repX = assertNumber(repTile[0], "repTile.x");
+    const repY = assertNumber(repTile[1], "repTile.y");
+    const currentZ = assertNumber(this.zfxy.z, "zfxy.z");
+    const repZ = (typeof repTile[2] === "number") ? repTile[2] : currentZ;
+
+    const repSpace = new Space({ z: repZ, f: assertNumber(this.zfxy.f, "zfxy.f"), x: repX, y: repY });
     return repSpace.surroundings().filter(s => s.intersects(geometry));
   }
 
@@ -176,15 +238,23 @@ export class Space {
    * 任意の経緯度（高度付き）から、この Space を生成
    */
   static fromCenter(center: LngLatWithAltitude, zoom: number = DEFAULT_ZOOM): Space {
-    return new Space(center, zoom);
+    const z = assertNumber(zoom, "zoom");
+    return new Space(center, z);
   }
 
   /**
    * 任意のポイント（LngLat）を含むタイル（同ズーム・指定フロア）を生成
    */
   static fromPoint(lng: number, lat: number, f: number, z: number = DEFAULT_ZOOM): Space {
-    const tile = pointToTile([lng, lat], z);
-    return new Space({ z, f, x: tile[0], y: tile[1] });
+    const lon = assertNumber(lng, "lng");
+    const la = assertNumber(lat, "lat");
+    const zoom = assertNumber(z, "z");
+    const floor = assertNumber(f, "f");
+
+    const tile = pointToTile(lon, la, zoom); // 正しいシグネチャ（lon, lat, z）
+    const x = assertNumber(tile[0], "tile.x");
+    const y = assertNumber(tile[1], "tile.y");
+    return new Space({ z: zoom, f: floor, x, y });
   }
 
   /* - PRIVATE - */
@@ -194,24 +264,27 @@ export class Space {
       throw new Error('zfxy is not set');
     }
 
-    const { z, f, x, y } = this.zfxy;
+    const z = assertNumber(this.zfxy.z, "zfxy.z");
+    const f = assertNumber(this.zfxy.f, "zfxy.f");
+    const x = assertNumber(this.zfxy.x, "zfxy.x");
+    const y = assertNumber(this.zfxy.y, "zfxy.y");
 
     // ズームと ZFXY の文字列表現
     this.zoom = z;
     this.zfxyStr = `/${z}/${f}/${x}/${y}`;
 
     // タイルハッシュと ID（必要に応じて規則変更可）
-    this.tilehash = generateTilehash(this.zfxy);
+    this.tilehash = generateTilehash({ z, f, x, y });
     this.id = this.tilehash;
 
     // 中心座標（高度付き）
-    const center = getCenterLngLatAlt(this.zfxy);
+    const center = getCenterLngLatAlt({ z, f, x, y });
     this.center = center;
-    this.alt = center.alt;
+    this.alt = assertNumber(center.alt, "center.alt");
 
-    // 必要なら bbox を計算して保持（フィールドを定義した場合のみ）
-    // const bbox = getBBox(this.zfxy);
-    // this.bbox = bbox;
+    // 必要なら bbox を保持
+    // const bboxNumbers = normalizeBBoxToNumbers(getBBox({ z, f, x, y }));
+    // this.bbox = bboxNumbers;
   }
 }
 
@@ -228,6 +301,8 @@ export {
   getSurrounding,
   getCenterLngLatAlt,
   generateTilehash,
-  parse  parseZFXYTilehash,
+  parseZFXYTilehash,
   bboxToTile,
   pointToTile,
+};
+``
