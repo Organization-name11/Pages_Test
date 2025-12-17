@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>空間IDお試し環境</title>
   <!-- ✅ 正しい CSS リンク -->
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <main class="container">
@@ -71,9 +71,26 @@
       <h2 class="section-title">周辺タイル</h2>
       <div class="list" id="around-list"><div class="mini">未計算</div></div>
     </section>
+
+    <!-- ✅ 親・子の並び（復活） -->
+    <section id="hierarchy" class="card">
+      <h2 class="section-title">親・子の並び</h2>
+      <div class="grid cols-2">
+        <div>
+          <h3 class="mini">親</h3>
+          <div class="list" id="parent-list"><div class="mini">未計算</div></div>
+        </div>
+        <div>
+          <h3 class="mini">子</h3>
+          <div class="list" id="children-list"><div class="mini">未計算</div></div>
+        </div>
+      </div>
+    </section>
   </main>
 
-   <!-- ✅ 読み込み順：UMD（ライブラリ）→ アプリ -->
+  <!-- ✅ 読み込み順：UMD（ライブラリ）→ アプリ（deferでDOM後に実行） -->
   <script src="./ouranos-gex-lib-for-JavaScript/dist/index.js"></script>
   <script src="./app.js" defer></script>
 </body>
+</html>
+``
