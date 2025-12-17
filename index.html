@@ -6,15 +6,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>空間IDお試し環境</title>
   <!-- ✅ 正しい CSS リンク -->
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="container">
     <header class="header">
       <h1>空間IDお試し環境</h1>
       <p class="sub">
-        緯度・経度・ズーム・高さから <strong>z/f/x/y</strong> と <strong>tilehash</strong> を試算し、
-        <strong>ズームレベル±1</strong> と <strong>周辺タイル</strong> を確認できます。
+        緯度・経度・ズーム・高さから <strong>z/f/x/y</strong> と <strong>tilehash</strong> を試算します。
       </p>
     </header>
 
@@ -57,50 +56,9 @@
         <div class="out-line"><strong>中心 (lng, lat, alt):</strong> <code id="center">-</code></div>
       </div>
     </section>
-
-    <!-- ズーム操作 -->
-    <section id="hierarchy" class="card">
-      <h2 class="section-title">ズーム操作（レベル変更）</h2>
-      <div class="actions">
-        <button id="zoom-plus" class="btn">ズームレベル +1</button>
-        <button id="zoom-minus" class="btn">ズームレベル -1</button>
-      </div>
-
-      <div class="grid cols-2" style="margin-top:12px;">
-        <div>
-          <h3 class="mini">親</h3>
-          <div class="list" id="parent-list"><div class="mini">未計算</div></div>
-        </div>
-        <div>
-          <h3 class="mini">子</h3>
-          <div class="list" id="children-list"><div class="mini">未計算</div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 周辺タイル -->
-    <section id="around" class="card">
-      <h2 class="section-title">周辺タイル（同ズーム近傍＋上下）</h2>
-      <div class="list" id="around-list"><div class="mini">未計算</div></div>
-    </section>
-
-    <!-- GeoJSON描画プレビュー（SVG） -->
-    <section id="preview" class="card">
-      <h2 class="section-title">プレビュー（GeoJSONポリゴン描画）</h2>
-      <div class="preview-panel">
-        <svg id="preview-svg" class="preview-svg" width="400" height="400" viewBox="0 0 400 400" aria-label="タイルポリゴンプレビュー">
-          <rect x="0" y="0" width="400" height="400" class="preview-bg" />
-          <path id="preview-current" class="preview-current" d="" />
-          <circle id="preview-center" class="preview-center" cx="0" cy="0" r="3" />
-          <rect id="preview-frame" class="preview-frame" x="0" y="0" width="400" height="400" />
-        </svg>
-        <p class="mini">※ このプレビューはタイルの外接矩形に線形マッピングしています（簡易表示）。</p>
-      </div>
-    </section>
   </main>
 
-  <!-- ✅ 読み込み順：UMD → アプリ（deferで順序維持＆DOM後実行） -->
-  <script src="./ouranos-gex-lib-for-JavaScript/dist/index.js" defer></script>
-  <script src="./app.js" defer></script>
+  <!-- ✅ 読み込み順：UMD（ライブラリ）→ アプリ -->
+  <script src="./ouranos-gex-lib-for-JavaScript/dist/index.js"></script>
+   <script src="./app.js"></script>
 </body>
-</html>

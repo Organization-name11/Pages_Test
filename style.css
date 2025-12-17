@@ -72,32 +72,3 @@ body {
 .mini { font-size: 12px; color: var(--muted); }
 .section-title { margin: 6px 0 10px; font-size: 16px; }
 
-/* ==== GeoJSONプレビュー（SVG） ==== */
-.preview-panel { display: grid; gap: 10px; }
-
-.preview-svg {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: #ffffff;
-}
-
-.preview-bg { fill: #f5f8ff; }
-
-.preview-frame {
-  fill: none;
-  stroke: #b6c4ff;
-  stroke-width: 1;
-  stroke-dasharray: 4 3;
-}
-
-.preview-current {
-  fill: rgba(36, 87, 214, 0.25); /* 半透明ブルー */
-  stroke: #2457d6;
-  stroke-width: 2;
-}
-
-.preview-center {
-  fill: #ff4d4f;
-  stroke: #b3261e;
-  stroke-width: 1;
-}
