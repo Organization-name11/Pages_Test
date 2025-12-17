@@ -39,7 +39,7 @@
     const { Space } = window.SpatialId;
     let currentSpace = null;
 
-    // ---------- 共通レンダリング ----------
+    // ------- 表示ユーティリティ -------
     const rowForSpace = (space) => {
       const div = document.createElement('div');
       div.className = 'list-item';
@@ -95,8 +95,7 @@
       });
     };
 
-    // ---------- GeoJSON → SVG 描画 ----------
-    // ring: [[lng, lat], ...] から bbox を算出
+    // ------- GeoJSON → SVG 描画 -------
     const bboxFromRing = (ring) => {
       let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
       for (const [lng, lat] of ring) {
@@ -108,14 +107,12 @@
       return { minLng, maxLng, minLat, maxLat };
     };
 
-    // 線形マッピング（bbox → viewBox）
     const projectToViewBox = (lng, lat, bbox, width = 400, height = 400) => {
       const { minLng, maxLng, minLat, maxLat } = bbox;
       const dx = (maxLng - minLng) || 1e-9;
       const dy = (maxLat - minLat) || 1e-9;
       const x = ((lng - minLng) / dx) * width;
-      // SVGは y 下向きなので、緯度が大きい（北）ほど上に来るように反転
-      const y = ((maxLat - lat) / dy) * height;
+      const y = ((maxLat - lat) / dy) * height; // 北が上に来るように反転
       return { x, y };
     };
 
@@ -129,7 +126,6 @@
           return;
         }
 
-        // 外周リング（holesは無視）
         const ring = feature.geometry.coordinates[0];
         if (!ring || ring.length < 3) {
           pathCurrent.setAttribute('d', '');
@@ -138,11 +134,9 @@
           return;
         }
 
-        // bbox を算出して線形マッピング
         const bbox = bboxFromRing(ring);
         const width = 400, height = 400;
 
-        // path の作成
         let d = '';
         ring.forEach(([lng, lat], i) => {
           const { x, y } = projectToViewBox(lng, lat, bbox, width, height);
@@ -151,7 +145,6 @@
         d += ' Z';
         pathCurrent.setAttribute('d', d);
 
-        // 中心点（space.center をマッピング）
         const c = space.center;
         const { x: cx, y: cy } = projectToViewBox(c.lng, c.lat, bbox, width, height);
         centerDot.setAttribute('cx', String(cx));
@@ -191,13 +184,12 @@
       parentListEl.innerHTML   = '<div class="mini">未計算</div>';
       childrenListEl.innerHTML = '<div class="mini">未計算</div>';
       aroundListEl.innerHTML   = '<div class="mini">未計算</div>';
-      // プレビューもクリア
       pathCurrent.setAttribute('d', '');
       centerDot.setAttribute('cx', '0');
       centerDot.setAttribute('cy', '0');
     };
 
-    // ---------- フォーム送信 ----------
+    // ------- フォーム送信 -------
     formEl.addEventListener('submit', (ev) => {
       ev.preventDefault();
 
@@ -220,7 +212,7 @@
       renderAll(currentSpace);
     });
 
-    // ---------- クリア ----------
+    // ------- クリア -------
     clearEl.addEventListener('click', () => {
       $('lat').value = "";
       $('lng').value = "";
@@ -230,7 +222,7 @@
       msgEl.textContent = "入力値をクリアしました。";
     });
 
-    // ---------- ズーム ±1（中心座標を維持して再生成） ----------
+    // ------- ズーム ±1（中心座標を維持して再生成） -------
     zoomPlusBtn.addEventListener('click', () => {
       if (!currentSpace) {
         msgEl.textContent = 'まず入力して「計算」を実行してください。';
@@ -267,6 +259,7 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start);
   } else {
-       start();
+    start();
   }
-})
+})();
+``

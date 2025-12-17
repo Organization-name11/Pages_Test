@@ -5,7 +5,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>空間IDお試し環境</title>
-  <link rel="stylesheet" href="style.css" />
+  <!-- ✅ 正しい CSS リンク -->
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <main class="container">
@@ -83,26 +84,22 @@
       <div class="list" id="around-list"><div class="mini">未計算</div></div>
     </section>
 
-    <!-- ✅ GeoJSON描画プレビュー（SVG） -->
+    <!-- GeoJSON描画プレビュー（SVG） -->
     <section id="preview" class="card">
       <h2 class="section-title">プレビュー（GeoJSONポリゴン描画）</h2>
       <div class="preview-panel">
         <svg id="preview-svg" class="preview-svg" width="400" height="400" viewBox="0 0 400 400" aria-label="タイルポリゴンプレビュー">
-          <!-- 背景 -->
           <rect x="0" y="0" width="400" height="400" class="preview-bg" />
-          <!-- 現在タイル -->
           <path id="preview-current" class="preview-current" d="" />
-          <!-- 中心点（任意） -->
           <circle id="preview-center" class="preview-center" cx="0" cy="0" r="3" />
-          <!-- 補助枠（BBox） -->
           <rect id="preview-frame" class="preview-frame" x="0" y="0" width="400" height="400" />
         </svg>
         <p class="mini">※ このプレビューはタイルの外接矩形に線形マッピングしています（簡易表示）。</p>
-      </div>
+           </div>
     </section>
   </main>
 
-   <!-- 読み込み順：UMDライブラリ → アプリ（deferで安全に） -->
+  <!-- ✅ 読み込み順：UMD → アプリ（defer） -->
   <script src="./ouranos-gex-lib-for-JavaScript/dist/index.js"></script>
   <script src="./app.js" defer></script>
 </body>
