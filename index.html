@@ -13,7 +13,7 @@
       <h1>空間IDお試し環境</h1>
       <p class="sub">
         緯度・経度・ズーム・高さから <strong>z/f/x/y</strong> と <strong>tilehash</strong> を試算し、
-        <strong>ズームレベル±1</strong>と<strong>周辺タイル</strong>を確認できます。
+        <strong>ズームレベル±1</strong> と <strong>周辺タイル</strong> を確認できます。
       </p>
     </header>
 
@@ -62,18 +62,18 @@
       <h2 class="section-title">ズーム操作（レベル変更）</h2>
       <div class="actions">
         <!-- 親：ズームを粗く（+1） -->
-        <button id="zoom-plus" class="btn">ズームレベル +1（親へ）</button>
+        <button id="zoom-plus" class="btn">ズームレベル +1</button>
         <!-- 子：ズームを細かく（-1） -->
-        <button id="zoom-minus" class="btn">ズームレベル -1（子へ）</button>
+        <button id="zoom-minus" class="btn">ズームレベル -1</button>
       </div>
 
       <div class="grid cols-2" style="margin-top:12px;">
         <div>
-          <h3 class="mini">親（+1）</h3>
+          <h3 class="mini">親</h3>
           <div class="list" id="parent-list"><div class="mini">未計算</div></div>
         </div>
         <div>
-          <h3 class="mini">子（-1）</h3>
+          <h3 class="mini">子</h3>
           <div class="list" id="children-list"><div class="mini">未計算</div></div>
         </div>
       </div>
@@ -86,7 +86,7 @@
     </section>
   </main>
 
-  <!-- ✅ 読み込み順：UMDライブラリ → アプリ（deferで安全に） -->
+  <!-- 読み込み順：UMDライブラリ → アプリ -->
   <script src="./ouranos-gex-lib-for-JavaScript/dist/index.js"></script>
   <script src="./app.js" defer></script>
 </</body>
