@@ -6,39 +6,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>空間IDお試し環境</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    /* 追加の簡易スタイル（必要なら style.css に移してください） */
-    :root { --bg:#fff; --fg:#222; --muted:#666; --border:#ddd; --accent:#2d7ef7; }
-    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--fg); background: var(--bg); margin: 0; }
-    .container { max-width: 960px; margin: 24px auto; padding: 0 16px; }
-    .header h1 { margin: 0 0 8px; }
-    .header .sub { color: var(--muted); margin: 0 0 16px; }
-    .stack { display: grid; gap: 12px; }
-    .field .label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-    .field input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
-    .actions { display: flex; gap: 8px; }
-    .actions button { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); background: #f7f7f8; cursor: pointer; }
-    .actions button.primary { background: var(--accent); color: white; border-color: var(--accent); }
-    .msg { min-height: 20px; color: var(--muted); }
-    .card { border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-top: 16px; background: #fafafa; }
-    .out { display: grid; gap: 8px; }
-    .out-line code { background: #eef3ff; padding: 2px 6px; border-radius: 6px; }
-    .grid { display: grid; gap: 8px; }
-    .grid.cols-2 { grid-template-columns: 1fr 1fr; }
-    .list { display: grid; gap: 4px; }
-    .list-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; border: 1px dashed var(--border); border-radius: 8px; padding: 6px 8px; background: #fff; }
-    .mini { font-size: 12px; color: var(--muted); }
-    .btn { font-size: 12px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; background: #f0f0f0; cursor: pointer; }
-    .btn.copy { background: #e8f1ff; border-color: #c7ddff; }
-    .btn.small { font-size: 11px; padding: 3px 6px; }
-    .section-title { margin: 12px 0 8px; font-size: 16px; }
-  </style>
 </head>
 <body>
   <main class="container">
     <header class="header">
       <h1>空間IDお試し環境</h1>
-      <p class="sub">緯度・経度・ズーム・高さから <strong>z/f/x/y</strong> と <strong>tilehash</strong> を試算し、<strong>親子ズーム</strong>と<strong>周辺タイル</strong>を確認できます。</p>
+      <p class="sub">
+        緯度・経度・ズーム・高さから <strong>z/f/x/y</strong> と <strong>tilehash</strong> を試算し、
+        <strong>ズームレベル±1</strong>と<strong>周辺タイル</strong>を確認できます。
+      </p>
     </header>
 
     <!-- 入力フォーム -->
@@ -64,8 +40,8 @@
       </label>
 
       <div class="actions">
-        <button type="submit" id="btn" class="primary">計算</button>
-        <button type="button" id="clear">クリア</button>
+        <button type="submit" id="btn" class="btn">計算</button>
+        <button type="button" id="clear" class="btn secondary">クリア</button>
       </div>
 
       <p id="msg" class="msg" aria-live="polite"></p>
@@ -75,30 +51,30 @@
     <section id="result" class="card">
       <h2 class="section-title">結果</h2>
       <div class="out">
-        <div class="out-line"><strong>z/f/x/y:</strong> <code id="zfxy">-</code> <button class="btn copy small" data-copy-target="zfxy">コピー</button></div>
-        <div class="out-line"><strong>tilehash:</strong> <code id="tilehash">-</code> <button class="btn copy small" data-copy-target="tilehash">コピー</button></div>
+        <div class="out-line"><strong>z/f/x/y:</strong> <code id="zfxy">-</code></div>
+        <div class="out-line"><strong>tilehash:</strong> <code id="tilehash">-</code></div>
         <div class="out-line"><strong>中心 (lng, lat, alt):</strong> <code id="center">-</code></div>
       </div>
     </section>
 
-    <!-- 親子ズーム -->
+    <!-- ズーム操作 -->
     <section id="hierarchy" class="card">
-      <h2 class="section-title">親子ズーム</h2>
-      <div class="grid cols-2">
+      <h2 class="section-title">ズーム操作（レベル変更）</h2>
+      <div class="actions">
+        <!-- 親：ズームを粗く（+1） -->
+        <button id="zoom-plus" class="btn">ズームレベル +1（親へ）</button>
+        <!-- 子：ズームを細かく（-1） -->
+        <button id="zoom-minus" class="btn">ズームレベル -1（子へ）</button>
+      </div>
+
+      <div class="grid cols-2" style="margin-top:12px;">
         <div>
-          <h3 class="mini">親（ズームを粗く）</h3>
-          <div class="list" id="parent-list">
-            <div class="mini">未計算</div>
-          </div>
-          <div style="margin-top:8px;">
-            <button id="to-parent" class="btn">親へ移動</button>
-          </div>
+          <h3 class="mini">親（+1）</h3>
+          <div class="list" id="parent-list"><div class="mini">未計算</div></div>
         </div>
         <div>
-          <h3 class="mini">子（ズームを細かく）</h3>
-          <div class="list" id="children-list">
-            <div class="mini">未計算</div>
-          </div>
+          <h3 class="mini">子（-1）</h3>
+          <div class="list" id="children-list"><div class="mini">未計算</div></div>
         </div>
       </div>
     </section>
@@ -106,14 +82,11 @@
     <!-- 周辺タイル -->
     <section id="around" class="card">
       <h2 class="section-title">周辺タイル（同ズーム近傍＋上下）</h2>
-      <div class="list" id="around-list">
-        <div class="mini">未計算</div>
-      </div>
+      <div class="list" id="around-list"><div class="mini">未計算</div></div>
     </section>
   </main>
 
-  <!-- ライブラリ（UMD）→ アプリ -->
+  <!-- ✅ 読み込み順：UMDライブラリ → アプリ（deferで安全に） -->
   <script src="./ouranos-gex-lib-for-JavaScript/dist/index.js"></script>
-  <script src="app.js"></script>
-</body>
-</
+  <script src="./app.js" defer></script>
+</</body>
