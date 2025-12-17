@@ -1,93 +1,218 @@
 
-// ---- ロード確認（コンソールに出ます） ----
+// ---- ロード確認 ----
 console.log("[app.js] loaded");
 
-// 仕様定数（UNVT ZFXY 仕様案の定義）
-const Z = 25;                 // ズーム25で高さ1mのボクセル
-const H = 2 ** Z;             // [m]
-const MAX_LAT = 85.05112878;  // Web Mercator の緯度範囲（概ね）
-
-function clampLat(latDeg) {
-  return Math.min(Math.max(latDeg, -MAX_LAT), MAX_LAT);
-}
-
-// ZFXY 計算（UNVT仕様案 + Slippy Map）
-function computeZFXY({ latDeg, lngDeg, z, hMeters }) {
-  const n = 2 ** z;
-
-  const latClamped = clampLat(latDeg);
-  const latRad = latClamped * Math.PI / 180;
-
-  // 垂直インデックス（f）
-  const f = Math.floor((n * hMeters) / H);
-
-  // 水平タイル（x, y）
-  const xFloat = n * ((lngDeg + 180) / 360);
-  const x = Math.floor(xFloat);
-
-  const yFloat = n * (1 - (Math.log(Math.tan(latRad) + (1 / Math.cos(latRad))) / Math.PI)) / 2;
-  const y = Math.floor(yFloat);
-
-  return { z, f, x, y };
-}
-
-// 表示用（小文字・先頭スラッシュなし）
-function toLowerId({ z, f, x, y }) {
-  return `${z}/${f}/${x}/${y}`;
-}
-
-// 要素のバインド（nullチェック付）
+// 簡易クエリ
 function $(id) {
   const el = document.getElementById(id);
   if (!el) throw new Error(`Element #${id} not found`);
   return el;
 }
-const formEl  = $('calc-form');
-const msgEl   = $('msg');
-const outEl   = $('zfxy');
-const btnEl   = $('btn');
-const clearEl = $('clear');
 
-// 送信ハンドラ（必ず反応）
+// 要素
+const formEl       = $('calc-form');
+const msgEl        = $('msg');
+const zfxyEl       = $('zfxy');
+const tilehashEl   = $('tilehash');
+const centerEl     = $('center');
+const clearEl      = $('clear');
+
+const parentListEl   = $('parent-list');
+const childrenListEl = $('children-list');
+const aroundListEl   = $('around-list');
+
+const toParentBtn    = $('to-parent');
+
+// 状態：現在の Space
+let currentSpace = null;
+
+// コピー（data-copy-target で参照）
+document.querySelectorAll('.btn.copy').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.getAttribute('data-copy-target');
+    const target = document.getElementById(id);
+    if (!target) return;
+    const text = target.textContent || '';
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'コピー済み';
+      setTimeout(() => btn.textContent = 'コピー', 1200);
+    }).catch(() => {
+      msgEl.textContent = 'コピーに失敗しました。権限設定をご確認ください。';
+    });
+  });
+});
+
+// レンダリング：結果パネル
+function renderMain(space) {
+  // z/f/x/y
+  zfxyEl.textContent = space.zfxyStr.replace(/^\//, "");
+
+  // tilehash
+  tilehashEl.textContent = space.id;
+
+  // center
+  const c = space.center; // {lng, lat, alt}
+  centerEl.textContent = `${c.lng.toFixed(6)}, ${c.lat.toFixed(6)}, ${c.alt}`;
+}
+
+// レンダリング：親リスト（1段 or 指定 atZoom）
+function renderParent(space) {
+  // 1段親
+  const parent = space.parent(); // デフォルトで1段階
+  parentListEl.innerHTML = '';
+  parentListEl.appendChild(rowForSpace(parent));
+}
+
+// レンダリング：子リスト（次のズームの全子）
+function renderChildren(space) {
+  const children = space.children(); // Space[]
+  childrenListEl.innerHTML = '';
+  if (!children || children.length === 0) {
+    const div = document.createElement('div');
+    div.className = 'mini';
+    div.textContent = '子がありません';
+    childrenListEl.appendChild(div);
+    return;
+  }
+  children.forEach(child => {
+    const row = rowForSpace(child, { clickable: true });
+    childrenListEl.appendChild(row);
+  });
+}
+
+// レンダリング：周辺
+function renderAround(space) {
+  const around = space.surroundings(); // Space[]
+  aroundListEl.innerHTML = '';
+  if (!around || around.length === 0) {
+    const div = document.createElement('div');
+    div.className = 'mini';
+    div.textContent = '周辺がありません';
+    aroundListEl.appendChild(div);
+    return;
+  }
+  around.forEach(s => {
+    const row = rowForSpace(s, { clickable: true });
+    aroundListEl.appendChild(row);
+  });
+}
+
+// Space を1行表示するユーティリティ
+function rowForSpace(space, opts = {}) {
+  const { clickable = false } = opts;
+  const div = document.createElement('div');
+  div.className = 'list-item';
+
+  const left = document.createElement('div');
+  left.innerHTML = `
+    <div><strong>${space.zfxyStr.replace(/^\//, "")}</strong></div>
+    <div class="mini">zoom=${space.zoom}, alt=${space.alt}, tilehash=${space.id}</div>
+  `;
+
+  const right = document.createElement('div');
+  const goBtn = document.createElement('button');
+  goBtn.className = 'btn small';
+  goBtn.textContent = clickable ? 'ここへ移動' : '詳細';
+  goBtn.addEventListener('click', () => {
+    // 現在の Space をこの Space に変更して再レンダリング
+    currentSpace = space;
+    syncInputsFromSpace(space);
+    renderAll(space);
+  });
+
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'btn copy small';
+  copyBtn.textContent = 'コピー';
+  copyBtn.addEventListener('click', () => {
+    const text = space.zfxyStr.replace(/^\//, "");
+    navigator.clipboard.writeText(text).then(() => {
+      copyBtn.textContent = 'コピー済み';
+      setTimeout(() => copyBtn.textContent = 'コピー', 1200);
+    });
+  });
+
+  right.appendChild(goBtn);
+  right.appendChild(copyBtn);
+
+  div.appendChild(left);
+  div.appendChild(right);
+  return div;
+}
+
+// Space から入力欄へ反映
+function syncInputsFromSpace(space) {
+  const c = space.center;
+  $('lat').value = String(c.lat);
+  $('lng').value = String(c.lng);
+  $('z').value   = String(space.zoom);
+  $('h').value   = String(c.alt ?? 0);
+}
+
+// 全レンダリング
+function renderAll(space) {
+  try {
+    renderMain(space);
+    renderParent(space);
+    renderChildren(space);
+    renderAround(space);
+    msgEl.textContent = `レンダリング完了: ${space.zfxyStr}`;
+  } catch (e) {
+    console.error(e);
+    msgEl.textContent = 'レンダリング時にエラーが発生しました。';
+  }
+}
+
+// 計算（フォーム送信）
 formEl.addEventListener('submit', (ev) => {
   console.log("[calc-form] submit clicked");
   ev.preventDefault();
 
-  // 入力値取得
   const lat = parseFloat($('lat').value);
   const lng = parseFloat($('lng').value);
   const z   = parseInt($('z').value, 10);
   const h   = parseFloat($('h').value);
 
-  // 入力検証（エラーメッセージを表示）
-  if (Number.isNaN(lat) || Number.isNaN(lng) || Number.isNaN(z) || Number.isNaN(h)) {
+  if ([lat, lng, z, h].some(v => Number.isNaN(v))) {
     msgEl.textContent = "入力値を確認してください（緯度・経度・ズーム・高さ）。";
-    outEl.textContent = "-";
+    zfxyEl.textContent = "-";
+    tilehashEl.textContent = "-";
+    centerEl.textContent = "-";
+    parentListEl.innerHTML = '<div class="mini">未計算</div>';
+    childrenListEl.innerHTML = '<div class="mini">未計算</div>';
+    aroundListEl.innerHTML = '<div class="mini">未計算</div>';
     return;
   }
   if (z < 0 || z > 30) {
     msgEl.textContent = "ズームレベルは 0〜30 の範囲で入力してください。";
-    outEl.textContent = "-";
     return;
   }
 
-  // 計算
-  const zfxy = computeZFXY({ latDeg: lat, lngDeg: lng, z, hMeters: h });
-
-  // 結果表示（小文字・先頭スラッシュなし）
-  outEl.textContent = toLowerId(zfxy);
-
-  // 実行メッセージ
-  msgEl.textContent = `計算しました（lat=${lat}, lng=${lng}, z=${z}, h=${h}）`;
+  const { Space } = window.SpatialId;
+  currentSpace = Space.getSpaceByLocation({ lat, lng, alt: h }, z);
+  renderAll(currentSpace);
 });
 
-// クリアボタン
+// クリア
 clearEl.addEventListener('click', () => {
   $('lat').value = "";
   $('lng').value = "";
   $('z').value   = "25";
   $('h').value   = "0";
-  outEl.textContent = "-";
+  zfxyEl.textContent = "-";
+  tilehashEl.textContent = "-";
+  centerEl.textContent = "-";
+  parentListEl.innerHTML = '<div class="mini">未計算</div>';
+  childrenListEl.innerHTML = '<div class="mini">未計算</div>';
+  aroundListEl.innerHTML = '<div class="mini">未計算</div>';
   msgEl.textContent = "入力値をクリアしました。";
 });
-``
+
+// 親へ移動ボタン
+toParentBtn.addEventListener('click', () => {
+  if (!currentSpace) {
+    msgEl.textContent = 'まず入力して「計算」を実行してください。';
+    return;
+  }
+  currentSpace = currentSpace.parent(); // 1段親へ
+  syncInputsFromSpace(currentSpace);
+   renderAll(currentSpace);})
