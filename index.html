@@ -1,0 +1,50 @@
+
+cat > index.html <<'EOF'
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>空間ID（Z/F/X/Y）計算ツール</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>空間ID（Z/F/X/Y）計算ツール</h1>
+
+    <form id="calc-form" class="grid">
+      <label>
+        緯度 (lat, °)
+        <input type="number" id="lat" step="any" placeholder="例: 35.681236" required>
+      </label>
+      <label>
+        経度 (lng, °)
+        <input type="number" id="lng" step="any" placeholder="例: 139.767125" required>
+      </label>
+      <label>
+        ズームレベル (z)
+        <input type="number" id="z" min="0" max="30" step="1" value="25" required>
+      </label>
+      <label>
+        高さ (h, m)
+        <input type="number" id="h" step="any" value="0" required>
+      </label>
+
+      <button type="submit" id="btn">計算</button>
+    </form>
+
+    <section id="result">
+      <h2>結果</h2>
+      <div class="out">
+        <div><strong>Z/F/X/Y:</strong> <code id="zfxy">-</code></div>
+        <div><strong>Z/X/Y:</strong> <code id="zxy">-</code> <span class="note">(水平のみ)</span></div>
+        <div class="explain">
+          <p>※ 緯度は Web Mercator の範囲（±85.051129°）にクランプします。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</</html>
