@@ -1,3 +1,4 @@
+
 // 仕様定数
 const Z = 25;                 // ズーム25で高さ1mのボクセル
 const H = 2 ** Z;             // [m]
@@ -7,21 +8,17 @@ function clampLat(latDeg) {
   return Math.min(Math.max(latDeg, -MAX_LAT), MAX_LAT);
 }
 
-// UNVT ZFXY 仕様案 & Slippy Map に基づく計算
+// ZFXY 計算（UNVT仕様案 + Slippy Map）
 function computeZFXY({ latDeg, lngDeg, z, hMeters }) {
   const n = 2 ** z;
 
   const latClamped = clampLat(latDeg);
   const latRad = latClamped * Math.PI / 180;
 
-  // f（垂直）
   const f = Math.floor((n * hMeters) / H);
-
-  // x（経度）
   const xFloat = n * ((lngDeg + 180) / 360);
   const x = Math.floor(xFloat);
 
-  // y（緯度）
   const yFloat = n * (1 - (Math.log(Math.tan(latRad) + (1 / Math.cos(latRad))) / Math.PI)) / 2;
   const y = Math.floor(yFloat);
 
@@ -31,8 +28,13 @@ function computeZFXY({ latDeg, lngDeg, z, hMeters }) {
 function toPath({ z, f, x, y }) { return `/${z}/${f}/${x}/${y}`; }
 function toZXY({ z, x, y }) { return `/${z}/${x}/${y}`; }
 
+// デバッグログ
+console.log("[app.js] loaded");
+
 document.getElementById('calc-form').addEventListener('submit', (ev) => {
+  console.log("[calc-form] submit clicked");
   ev.preventDefault();
+
   const lat = parseFloat(document.getElementById('lat').value);
   const lng = parseFloat(document.getElementById('lng').value);
   const z   = parseInt(document.getElementById('z').value, 10);
@@ -49,5 +51,5 @@ document.getElementById('calc-form').addEventListener('submit', (ev) => {
 
   const zfxy = computeZFXY({ latDeg: lat, lngDeg: lng, z, hMeters: h });
   document.getElementById('zfxy').textContent = toPath(zfxy);
-   document.getElementById('zxy').textContent  = toZXY(zfxy);
+  document.getElementById('zxy').textContent  = toZXY(zfxy);
 });
