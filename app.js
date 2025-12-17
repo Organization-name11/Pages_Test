@@ -153,33 +153,52 @@
       msgEl.textContent = "入力値をクリアしました。";
     });
 
-    // ズーム +1（親へ：粗く）
-    zoomPlusBtn.addEventListener('click', () => {
-      if (!currentSpace) {
-        msgEl.textContent = 'まず入力して「計算」を実行してください。';
-        return;
-      }
-      currentSpace = currentSpace.parent(); // 1段親へ
-      syncInputsFromSpace(currentSpace);
-      renderAll(currentSpace);
-    });
 
-    // ズーム -1（子へ：細かく）→ 中央近似の子に移動
-    zoomMinusBtn.addEventListener('click', () => {
-      if (!currentSpace) {
-        msgEl.textContent = 'まず入力して「計算」を実行してください。';
-        return;
-      }
-      const children = currentSpace.children();
-      if (!children || children.length === 0) {
-        msgEl.textContent = 'このズームでは子タイルがありません。';
-        return;
-      }
-      const midIdx = Math.floor(children.length / 2);
-      const next = children[midIdx] || children[0];
-      currentSpace = next;
-      syncInputsFromSpace(currentSpace);
-      renderAll(currentSpace);
+// ズーム +1（細かく：数値を増やす）
+zoomPlusBtn.addEventListener('click', () => {
+  if (!currentSpace) {
+    msgEl.textContent = 'まず入力して「計算」を実行してください。';
+    return;
+  }
+  const { Space } = window.SpatialId;
+  const c = currentSpace.center;          // { lng, lat, alt }
+  const nextZoom = currentSpace.zoom + 1;
+
+  if (nextZoom > 30) {
+    msgEl.textContent = 'これ以上ズームを上げられません（最大 30）。';
+    return;
+  }
+
+  currentSpace = Space.getSpaceByLocation(
+    { lat: c.lat, lng: c.lng, alt: c.alt },
+    nextZoom
+  );
+  syncInputsFromSpace(currentSpace);
+  renderAll(currentSpace);
+});
+
+// ズーム -1（粗く：数値を減らす）
+zoomMinusBtn.addEventListener('click', () => {
+  if (!currentSpace) {
+    msgEl.textContent = 'まず入力して「計算」を実行してください。';
+    return;
+  }
+  const { Space } = window.SpatialId;
+  const c = currentSpace.center;          // { lng, lat, alt }
+  const nextZoom = currentSpace.zoom - 1;
+
+  if (nextZoom < 0) {
+    msgEl.textContent = 'これ以上ズームを下げられません（最小 0）。';
+    return;
+  }
+
+  currentSpace = Space.getSpaceByLocation(
+    { lat: c.lat, lng: c.lng, alt: c.alt },
+    nextZoom
+   );
+  syncInputsFromSpace(currentSpace);
+  renderAll(currentSpace);
+
     });
   };
 
