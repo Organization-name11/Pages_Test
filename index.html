@@ -5,14 +5,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>空間IDお試し環境</title>
-  style.css
+  <!-- ✅ 正しい CSS 読み込み -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="container">
-    <h1>空間IDお試し環境</h1>
+    <header class="header">
+      <h1>空間IDお試し環境</h1>
+      <p class="sub">緯度・経度・ズーム・高さから <strong>z/f/x/y</strong> を試算します</p>
+    </header>
 
-    <!-- 入力フォーム：縦並び -->
-    <form id="calc-form" class="stack">
+    <!-- 入力フォーム（縦並び） -->
+    <form id="calc-form" class="stack" novalidate>
       <label class="field">
         <span class="label">緯度 (度)</span>
         <input type="number" id="lat" step="any" placeholder="例: 35.681236" required />
@@ -41,14 +45,15 @@
       <p id="msg" class="msg" aria-live="polite"></p>
     </form>
 
-    <!-- 結果 -->
+    <!-- 結果表示 -->
     <section id="result">
       <h2>結果</h2>
       <div class="out">
-        <div><strong>z/f/x/y:</strong> <code id="zfxy">-</code></div>
+        <div class="out-line"><strong>z/f/x/y:</strong> <code id="zfxy">-</code></div>
       </div>
     </section>
   </main>
 
-  app.js</script>
-</</body>
+  <!-- ✅ 正しい JS 読み込み（body 終了直前） -->
+  <script src="app.js"></script  <script src="app.js"></script>
+</body>

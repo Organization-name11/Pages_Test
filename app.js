@@ -1,8 +1,8 @@
 
-// --- 読み込み確認（必要なら残してください） ---
+// ---- ロード確認（コンソールに出ます） ----
 console.log("[app.js] loaded");
 
-// 仕様定数（UNVT ZFXY 仕様案の定義に基づく）
+// 仕様定数（UNVT ZFXY 仕様案の定義）
 const Z = 25;                 // ズーム25で高さ1mのボクセル
 const H = 2 ** Z;             // [m]
 const MAX_LAT = 85.05112878;  // Web Mercator の緯度範囲（概ね）
@@ -12,16 +12,16 @@ function clampLat(latDeg) {
 }
 
 // ZFXY 計算（UNVT仕様案 + Slippy Map）
-// f = floor(n * h / H)
-// x = floor( n * ((lng + 180) / 360) )
-// y = floor( n * (1 - log(tan(lat_rad) + (1 / cos(lat_rad))) / π) / 2 )
 function computeZFXY({ latDeg, lngDeg, z, hMeters }) {
   const n = 2 ** z;
 
   const latClamped = clampLat(latDeg);
   const latRad = latClamped * Math.PI / 180;
 
+  // 垂直インデックス（f）
   const f = Math.floor((n * hMeters) / H);
+
+  // 水平タイル（x, y）
   const xFloat = n * ((lngDeg + 180) / 360);
   const x = Math.floor(xFloat);
 
@@ -36,24 +36,30 @@ function toLowerId({ z, f, x, y }) {
   return `${z}/${f}/${x}/${y}`;
 }
 
-// 要素取得（null防止のため事前バインド）
-const formEl = document.getElementById('calc-form');
-const msgEl  = document.getElementById('msg');
-const outEl  = document.getElementById('zfxy');
-const clearEl= document.getElementById('clear');
+// 要素のバインド（nullチェック付）
+function $(id) {
+  const el = document.getElementById(id);
+  if (!el) throw new Error(`Element #${id} not found`);
+  return el;
+}
+const formEl  = $('calc-form');
+const msgEl   = $('msg');
+const outEl   = $('zfxy');
+const btnEl   = $('btn');
+const clearEl = $('clear');
 
-// クリックログ（イベント確認用）
+// 送信ハンドラ（必ず反応）
 formEl.addEventListener('submit', (ev) => {
   console.log("[calc-form] submit clicked");
   ev.preventDefault();
 
-  // 入力値
-  const lat = parseFloat(document.getElementById('lat').value);
-  const lng = parseFloat(document.getElementById('lng').value);
-  const z   = parseInt(document.getElementById('z').value, 10);
-  const h   = parseFloat(document.getElementById('h').value);
+  // 入力値取得
+  const lat = parseFloat($('lat').value);
+  const lng = parseFloat($('lng').value);
+  const z   = parseInt($('z').value, 10);
+  const h   = parseFloat($('h').value);
 
-  // 入力チェック
+  // 入力検証（エラーメッセージを表示）
   if (Number.isNaN(lat) || Number.isNaN(lng) || Number.isNaN(z) || Number.isNaN(h)) {
     msgEl.textContent = "入力値を確認してください（緯度・経度・ズーム・高さ）。";
     outEl.textContent = "-";
@@ -68,19 +74,19 @@ formEl.addEventListener('submit', (ev) => {
   // 計算
   const zfxy = computeZFXY({ latDeg: lat, lngDeg: lng, z, hMeters: h });
 
-  // 表示（小文字／先頭スラッシュなし）
+  // 結果表示（小文字・先頭スラッシュなし）
   outEl.textContent = toLowerId(zfxy);
 
-  // メッセージ更新
+  // 実行メッセージ
   msgEl.textContent = `計算しました（lat=${lat}, lng=${lng}, z=${z}, h=${h}）`;
 });
 
 // クリアボタン
 clearEl.addEventListener('click', () => {
-  document.getElementById('lat').value = "";
-  document.getElementById('lng').value = "";
-  document.getElementById('z').value   = "25";
-  document.getElementById('h').value   = "0";
+  $('lat').value = "";
+  $('lng').value = "";
+  $('z').value   = "25";
+  $('h').value   = "0";
   outEl.textContent = "-";
   msgEl.textContent = "入力値をクリアしました。";
 });
