@@ -2,32 +2,29 @@
 {
   "name": "test_spatialid_api_demo",
   "version": "1.0.0",
-  "description": "",
   "private": true,
+  "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "export": "next export",
     "start": "next start",
-    "predeploy": "next build",
+    "predeploy": "NODE_ENV=production npm run build && npm run export && touch out/.nojekyll",
     "deploy": "gh-pages -d out"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@turf/bbox": "^7.3.0",
     "@turf/boolean-intersects": "^7.3.0",
     "@turf/helpers": "^7.3.0",
-    "next": "^16.0.3",
-    "ouranos-gex-lib-for-javascript": "github:ouranos-gex/ouranos-gex-lib-for-JavaScript",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "next": "14.2.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
-    "@types/react": "19.2.6",
+    "@types/node": "^20.14.11",
+    "@types/react": "18.2.56",
     "gh-pages": "^6.3.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.6.3"
   }
 }
