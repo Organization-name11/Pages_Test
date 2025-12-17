@@ -4,11 +4,14 @@
   --fg: #1a1a1a;
   --muted: #555555;
   --border: #d0d7de;
+
   --btn-bg: #2457d6;
   --btn-bg-hover: #1b46ad;
   --btn-fg: #ffffff;
+
   --btn-sec-bg: #6b7280;
   --btn-sec-hover: #525862;
+
   --chip-bg: #eef3ff;
 }
 
@@ -76,11 +79,12 @@ body {
   font-weight: 600;
   letter-spacing: 0.01em;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn:hover {
   background: var(--btn-bg-hover);
+  box-shadow: 0 2px 8px rgba(36, 87, 214, 0.25);
 }
 
 .btn.secondary {
@@ -89,6 +93,7 @@ body {
 
 .btn.secondary:hover {
   background: var(--btn-sec-hover);
+  box-shadow: 0 2px 8px rgba(82, 88, 98, 0.25);
 }
 
 .msg {
@@ -146,6 +151,41 @@ body {
 }
 
 .section-title {
-   margin: 6px 0 10px;
+  margin: 6px 0 10px;
   font-size: 16px;
+}
+
+/* ==== GeoJSONプレビュー（SVG） ==== */
+.preview-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.preview-svg {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.preview-bg {
+  fill: #f5f8ff;
+}
+
+.preview-frame {
+  fill: none;
+  stroke: #b6c4ff;
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.preview-current {
+  fill: rgba(36, 87, 214, 0.25); /* 半透明ブルー */
+  stroke: #2457d6;
+  stroke-width: 2;
+}
+
+.preview-center {
+  fill: #ff4d4f;
+  stroke: #b3261e;
+   stroke-width: 1;
 }
