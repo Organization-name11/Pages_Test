@@ -13,6 +13,10 @@
   --btn-sec-hover: #525862;
 
   --chip-bg: #eef3ff;
+
+  /* 結果強調用 */
+  --accent-strong: #1f4bd8;
+  --accent-bg: #e9f0ff;
 }
 
 * { box-sizing: border-box; }
@@ -58,7 +62,10 @@ body {
 }
 
 .out { display: grid; gap: 8px; }
-.out-line code { background: var(--chip-bg); padding: 3px 8px; border-radius: 8px; }
+.out-line code {
+  background: var(--chip-bg);
+  padding: 3px 8px; border-radius: 8px;
+}
 
 .grid { display: grid; gap: 12px; }
 .grid.cols-2 { grid-template-columns: 1fr 1fr; }
@@ -69,4 +76,32 @@ body {
   border: 1px dashed var(--border); border-radius: 10px; padding: 10px 12px; background: #fff;
 }
 
-.m.mini { font-size: 12px; color: var(--muted); }
+.mini { font-size: 12px; color: var(--muted); }
+.section-title { margin: 6px 0 10px; font-size: 16px; }
+
+/* ===== 結果強調（z/f/x/y を目立たせる） ===== */
+.result-card { border-color: #cdd6f7; background: #f6f8ff; }
+.result-out { gap: 10px; }
+
+.label-strong { font-size: 14px; color: #333; }
+
+.zfxy-accent {
+  display: inline-block;
+  font-size: 24px;            /* ← 大きく */
+  font-weight: 800;           /* ← 太く */
+  color: var(--accent-strong);/* ← 目立つ色 */
+  background: var(--accent-bg);
+  padding: 6px 10px;
+  border-radius: 10px;
+  letter-spacing: 0.02em;
+}
+
+.result-code-lg {
+  font-size: 18px;            /* tilehash は一段大きく */
+  font-weight: 600;
+}
+
+.result-code-md {
+  font-size: 16px;            /* 中心は少し大きく */
+}
+

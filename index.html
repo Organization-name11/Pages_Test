@@ -5,8 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>空間IDお試し環境</title>
-  <!-- ✅ 正しい CSS リンク -->
-  <link rel="stylesheet" href="style.css" />
+  style.css
 </head>
 <body>
   <main class="container">
@@ -47,13 +46,22 @@
       <p id="msg" class="msg" aria-live="polite"></p>
     </form>
 
-    <!-- 結果 -->
-    <section id="result" class="card">
+    <!-- 結果（文字を大きく＆z/f/x/y 強調） -->
+    <section id="result" class="card result-card">
       <h2 class="section-title">結果</h2>
-      <div class="out">
-        <div class="out-line"><strong>z/f/x/y:</strong> <code id="zfxy">-</code></div>
-        <div class="out-line"><strong>tilehash:</strong> <code id="tilehash">-</code></div>
-        <div class="out-line"><strong>中心 (lng, lat, alt):</strong> <code id="center">-</code></div>
+      <div class="out result-out">
+        <div class="out-line result-zfxy-line">
+          <strong class="label-strong">z/f/x/y:</strong>
+          <code id="zfxy" class="zfxy-accent">-</code>
+        </div>
+        <div class="out-line result-id-line">
+          <strong>tilehash:</strong>
+          <code id="tilehash" class="result-code-lg">-</code>
+        </div>
+        <div class="out-line result-center-line">
+          <strong>中心 (lng, lat, alt):</strong>
+          <code id="center" class="result-code-md">-</code>
+        </div>
       </div>
     </section>
 
@@ -66,15 +74,8 @@
       </div>
     </section>
 
-    <!-- 周辺タイル -->
-    <section id="around" class="card">
-      <h2 class="section-title">周辺タイル</h2>
-      <div class="list" id="around-list"><div class="mini">未計算</div></div>
-    </section>
-
-    <!-- 親・子の並び -->
+    <!-- ✅ 親・子の並び（見出しなし／ズーム操作の直後に配置） -->
     <section id="hierarchy" class="card">
-      <h2 class="section-title">親・子の並び</h2>
       <div class="grid cols-2">
         <div>
           <h3 class="mini">親</h3>
@@ -86,9 +87,15 @@
         </div>
       </div>
     </section>
+
+    <!-- 周辺タイル（この位置は据え置き） -->
+    <section id="around" class="card">
+      <h2 class="section-title">周辺タイル</h2>
+      <div class="list" id="around-list"><div class="mini">未計算</div></div>
+    </section>
   </main>
 
   <!-- ✅ 読み込み順：UMD（ライブラリ）→ アプリ -->
-  <script src="./ouranos-gex-lib-for-JavaScript/dist/index.js"></script>
-   <script src="./app.js"></script>
+   ./ouranos-gex-lib-for-JavaScript/dist/index.js</script>
+  ./app.js</script>
 </body>
