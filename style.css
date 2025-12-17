@@ -1,11 +1,12 @@
 
 :root {
-  --bg: #ffffff;         /* 背景を白に */
-  --fg: #0f172a;         /* 文字は濃いめの紺 */
+  --bg: #ffffff;         /* 背景（白） */
+  --fg: #0f172a;         /* テキスト（濃紺） */
   --muted: #475569;      /* 補助テキスト */
   --accent: #2563eb;     /* アクセント（青） */
-  --panel: #f8fafc;      /* 入力背景（薄いグレー） */
-  --btn: #3b82f6;        /* ボタン基調色（青） */
+  --panel: #f8fafc;      /* 入力背景（薄灰） */
+  --border: #e2e8f0;     /* 枠線 */
+  --btn: #3b82f6;        /* ボタン基調色 */
 }
 
 /* ベース */
@@ -16,32 +17,30 @@ html, body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP",
                "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif;
 }
-.container { max-width: 860px; margin: 32px auto; padding: 0 16px; }
-h1 { font-size: 1.8rem; margin-bottom: 1rem; }
+.container { max-width: 720px; margin: 32px auto; padding: 0 16px; }
+h1 { font-size: 1.9rem; margin: 0 0 16px; }
+h2 { font-size: 1.3rem; margin: 24px 0 12px; }
 
-/* 入力フォーム */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  align-items: end;
-}
-label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 0.95rem;
-}
+/* 縦レイアウトのフォーム */
+.stack { display: grid; gap: 12px; }
+.field { display: grid; gap: 6px; }
+.label { font-size: 0.95rem; color: var(--muted); }
+
 input {
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--border);
   background: var(--panel);
   color: var(--fg);
+  outline: none;
 }
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.actions { display: flex; gap: 8px; }
 button {
-  margin-top: 8px;
-  grid-column: 1 / -1;
   padding: 12px 14px;
   border-radius: 10px;
   border: 0;
@@ -50,13 +49,20 @@ button {
   font-weight: 700;
   cursor: pointer;
 }
-button:hover { filter: brightness(1.06); }
+button#clear {
+  background: #e5e7eb; /* グレー */
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* メッセージ */
+.msg { margin: 4px 0 0; color: var(--muted); min-height: 1em; }
 
 /* 結果表示 */
 #result { margin-top: 24px; }
 .out {
   padding: 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
   border-radius: 12px;
   background: #ffffff;
   display: grid;
@@ -68,14 +74,8 @@ code {
   border-radius: 6px;
   color: #1e40af;
 }
-.note {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-left: 6px;
-}
-details { margin-top: 12px; color: var(--muted); }
 
-/* スモールスクリーン */
+/* スモールスクリーンでも縦並び維持 */
 @media (max-width: 640px) {
-  .grid { grid-template-columns: 1fr; }
+   .container { padding: 0 12px; }
 }
