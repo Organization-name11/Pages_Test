@@ -11,7 +11,7 @@
       return;
     }
 
-    // 要素取得ヘルパー
+    // 要素取得
     const $ = (id) => {
       const el = document.getElementById(id);
       if (!el) throw new Error(`Element #${id} not found`);
@@ -34,16 +34,13 @@
 
     // 結果レンダリング
     const render = (space) => {
-      // z/f/x/y（先頭スラッシュ削除）
       zfxyEl.textContent = space.zfxyStr.replace(/^\//, "");
-      // tilehash
       tilehashEl.textContent = space.id;
-      // 中心座標
-      const c = space.center; // {lng, lat, alt}
+      const c = space.center;
       centerEl.textContent = `${c.lng.toFixed(6)}, ${c.lat.toFixed(6)}, ${c.alt}`;
     };
 
-    // 周辺タイルリスト
+    // 周辺タイル
     const rowForSpace = (space) => {
       const div = document.createElement('div');
       div.className = 'list-item';
@@ -56,7 +53,7 @@
 
     const renderAround = (space) => {
       try {
-        const around = space.surroundings(); // Space[]
+        const around = space.surroundings();
         aroundListEl.innerHTML = '';
         if (!around || around.length === 0) {
           aroundListEl.innerHTML = '<div class="mini">周辺がありません</div>';
@@ -108,7 +105,7 @@
       }
     });
 
-    // ズーム +1（中心座標を維持して再計算）
+    // ズーム +1（中心座標維持で再生成）
     zoomPlusBtn?.addEventListener('click', () => {
       if (!currentSpace) {
         msgEl.textContent = 'まず入力して「計算」を実行してください。';
@@ -121,14 +118,13 @@
         return;
       }
       currentSpace = Space.getSpaceByLocation({ lat: c.lat, lng: c.lng, alt: c.alt }, nextZoom);
-      // 入力欄へ反映
       $('z').value = String(currentSpace.zoom);
       render(currentSpace);
       renderAround(currentSpace);
       msgEl.textContent = `ズームを ${nextZoom} に変更しました。`;
     });
 
-    // ズーム -1（中心座標を維持して再計算）
+    // ズーム -1（中心座標維持で再生成）
     zoomMinusBtn?.addEventListener('click', () => {
       if (!currentSpace) {
         msgEl.textContent = 'まず入力して「計算」を実行してください。';
@@ -157,7 +153,7 @@
       tilehashEl.textContent = "-";
       centerEl.textContent = "-";
       aroundListEl.innerHTML = '<div class="mini">未計算</div>';
-           msgEl.textContent    = "入力値をクリアしました。";
+      msgEl.textContent    = "入力値をクリアしました。";
     });
   };
 
@@ -166,4 +162,5 @@
   } else {
     start();
   }
-})
+})();
+``
