@@ -32,7 +32,6 @@
     const zoomMinusBtn = $('zoom-minus');  // ズーム -1
 
     // SVG要素
-    const svgEl        = $('preview-svg');
     const pathCurrent  = $('preview-current');
     const centerDot    = $('preview-center');
 
@@ -95,39 +94,88 @@
       });
     };
 
-    // ------- GeoJSON → SVG 描画 -------
+    // ------- GeoJSON 正規化・描画 -------
+    // FeatureCollection → 最初の Feature、Geometry → Feature 化
+    const normalizeFeature = (geo) => {
+      if (!geo) return null;
+      if (geo.type === 'FeatureCollection') {
+        return (geo.features && geo.features.length) ? geo.features[0] : null;
+      }
+      if (geo.type === 'Feature') return geo;
+      if (geo.type) return { type: 'Feature', geometry: geo, properties: {} };
+      return null;
+    };
+
+    // Polygon/MultiPolygon から最大リング（外周）を返す
+    const largestRingFromGeometry = (geometry) => {
+      if (!geometry) return null;
+
+      if (geometry.type === 'Polygon') {
+        const rings = geometry.coordinates || [];
+        if (!rings.length) return null;
+        // 外周は通常 index=0、ただし保険で頂点数の大きいものを選ぶ
+        return rings.sort((a, b) => (b?.length || 0) - (a?.length || 0))[0];
+      }
+
+      if (geometry.type === 'MultiPolygon') {
+        const polys = geometry.coordinates || [];
+        if (!polys.length) return null;
+        let best = null;
+        let bestLen = -1;
+        for (const rings of polys) {
+          const ring = (Array.isArray(rings) && rings.length) ? rings[0] : null; // 各Polygonの外周
+          const len = ring ? ring.length : 0;
+          if (len > bestLen) { best = ring; bestLen = len; }
+        }
+        return best;
+      }
+
+      return null; // その他の geometry type は未対応（LineStringなど）
+    };
+
     const bboxFromRing = (ring) => {
       let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
-      for (const [lng, lat] of ring) {
+      for (const p of ring) {
+        const lng = p[0];
+        const lat = p[1];
         if (lng < minLng) minLng = lng;
         if (lng > maxLng) maxLng = lng;
         if (lat < minLat) minLat = lat;
         if (lat > maxLat) maxLat = lat;
       }
+      const eps = 1e-9; // ゼロ幅対策
+      if (maxLng - minLng < eps) maxLng = minLng + eps;
+      if (maxLat - minLat < eps) maxLat = minLat + eps;
       return { minLng, maxLng, minLat, maxLat };
     };
 
-    const projectToViewBox = (lng, lat, bbox, width = 400, height = 400) => {
+    // 線形マッピング（bbox → viewBox 0..400、paddingあり）
+    const projectToViewBox = (lng, lat, bbox, width = 400, height = 400, padding = 12) => {
       const { minLng, maxLng, minLat, maxLat } = bbox;
-      const dx = (maxLng - minLng) || 1e-9;
-      const dy = (maxLat - minLat) || 1e-9;
-      const x = ((lng - minLng) / dx) * width;
-      const y = ((maxLat - lat) / dy) * height; // 北が上に来るように反転
+      const dx = (maxLng - minLng);
+      const dy = (maxLat - minLat);
+      const w = width  - padding * 2;
+      const h = height - padding * 2;
+      const x = ((lng - minLng) / dx) * w + padding;
+      const y = ((maxLat - lat) / dy) * h + padding; // 北が上へ来るように反転
       return { x, y };
     };
 
     const renderPreview = (space) => {
       try {
-        const feature = space.toGeoJSON();
-        if (!feature || !feature.geometry || feature.geometry.type !== 'Polygon') {
+        const raw = space.toGeoJSON();
+        const feat = normalizeFeature(raw);
+        if (!feat || !feat.geometry) {
+          console.warn('renderPreview: invalid feature', raw);
           pathCurrent.setAttribute('d', '');
           centerDot.setAttribute('cx', '0');
           centerDot.setAttribute('cy', '0');
           return;
         }
 
-        const ring = feature.geometry.coordinates[0];
+        const ring = largestRingFromGeometry(feat.geometry);
         if (!ring || ring.length < 3) {
+          console.warn('renderPreview: ring not found or too short', feat.geometry);
           pathCurrent.setAttribute('d', '');
           centerDot.setAttribute('cx', '0');
           centerDot.setAttribute('cy', '0');
@@ -135,23 +183,25 @@
         }
 
         const bbox = bboxFromRing(ring);
-        const width = 400, height = 400;
+        const width = 400, height = 400, padding = 12;
 
         let d = '';
         ring.forEach(([lng, lat], i) => {
-          const { x, y } = projectToViewBox(lng, lat, bbox, width, height);
+          const { x, y } = projectToViewBox(lng, lat, bbox, width, height, padding);
           d += (i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
         });
         d += ' Z';
         pathCurrent.setAttribute('d', d);
 
         const c = space.center;
-        const { x: cx, y: cy } = projectToViewBox(c.lng, c.lat, bbox, width, height);
+        const { x: cx, y: cy } = projectToViewBox(c.lng, c.lat, bbox, width, height, padding);
         centerDot.setAttribute('cx', String(cx));
         centerDot.setAttribute('cy', String(cy));
       } catch (e) {
         console.error('renderPreview error:', e);
         pathCurrent.setAttribute('d', '');
+        centerDot.setAttribute('cx', '0');
+        centerDot.setAttribute('cy', '0');
       }
     };
 
@@ -253,7 +303,7 @@
       currentSpace = Space.getSpaceByLocation({ lat: c.lat, lng: c.lng, alt: c.alt }, nextZoom);
       syncInputsFromSpace(currentSpace);
       renderAll(currentSpace);
-    });
+       });
   };
 
   if (document.readyState === 'loading') {
@@ -261,5 +311,4 @@
   } else {
     start();
   }
-})();
-``
+})

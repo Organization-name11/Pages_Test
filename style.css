@@ -185,7 +185,7 @@ body {
 }
 
 .preview-center {
-  fill: #ff4d4f;
+   fill: #ff4d4f;
   stroke: #b3261e;
-   stroke-width: 1;
+  stroke-width: 1;
 }
