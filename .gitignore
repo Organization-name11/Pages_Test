@@ -1,5 +1,3 @@
-
-cat > .gitignore <<'EOF'
 # 基本
 node_modules/
 .cache/

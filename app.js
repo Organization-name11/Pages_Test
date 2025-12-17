@@ -1,5 +1,3 @@
-
-cat > app.js <<'EOF'
 // 仕様定数
 const Z = 25;                 // ズーム25で高さ1mのボクセル
 const H = 2 ** Z;             // [m]
