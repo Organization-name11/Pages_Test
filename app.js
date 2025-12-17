@@ -1,3 +1,4 @@
+
 // 仕様定数
 const Z = 25;                 // ズーム25で高さ1mのボクセル
 const H = 2 ** Z;             // [m]
@@ -24,13 +25,17 @@ function computeZFXY({ latDeg, lngDeg, z, hMeters }) {
   return { z, f, x, y };
 }
 
-function toPath({ z, f, x, y }) { return `/${z}/${f}/${x}/${y}`; }
-function toZXY({ z, x, y }) { return `/${z}/${x}/${y}`; }
+// 表示用（小文字・先頭スラッシュなし）
+function toLowerId({ z, f, x, y }) {
+  return `${z}/${f}/${x}/${y}`;
+}
 
-// デバッグログ
+// 読み込み確認
 console.log("[app.js] loaded");
 
-document.getElementById('calc-form').addEventListener('submit', (ev) => {
+// フォーム送信ハンドラ
+const formEl = document.getElementById('calc-form');
+formEl.addEventListener('submit', (ev) => {
   console.log("[calc-form] submit clicked");
   ev.preventDefault();
 
@@ -44,11 +49,10 @@ document.getElementById('calc-form').addEventListener('submit', (ev) => {
     return;
   }
   if (z < 0 || z > 30) {
-    alert('ズームレベルは 0〜30 の範囲で入力してください。');
+       alert('ズームレベルは 0〜30 の範囲で入力してください。');
     return;
   }
 
   const zfxy = computeZFXY({ latDeg: lat, lngDeg: lng, z, hMeters: h });
-  document.getElementById('zfxy').textContent = toPath(zfxy);
-  document.getElementById('zxy').textContent  = toZXY(zfxy);
+  document.getElementById('zfxy').textContent = toLowerId(zfxy);
 });

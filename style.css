@@ -1,10 +1,11 @@
+
 :root {
-  --bg: #0f172a;
-  --fg: #e2e8f0;
-  --muted: #94a3b8;
-  --accent: #38bdf8;
-  --panel: #111827;
-  --btn: #22d3ee;
+  --bg: #ffffff;         /* 背景を白に */
+  --fg: #0f172a;         /* 文字は濃いめの紺 */
+  --muted: #475569;      /* 補助テキスト */
+  --accent: #2563eb;     /* アクセント（青） */
+  --panel: #f8fafc;      /* 入力背景（薄いグレー） */
+  --btn: #3b82f6;        /* ボタン基調色（青） */
 }
 
 /* ベース */
@@ -34,7 +35,7 @@ label {
 input {
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid #1f2937;
+  border: 1px solid #cbd5e1;
   background: var(--panel);
   color: var(--fg);
 }
@@ -45,7 +46,7 @@ button {
   border-radius: 10px;
   border: 0;
   background: linear-gradient(90deg, var(--btn), var(--accent));
-  color: #001014;
+  color: #ffffff;
   font-weight: 700;
   cursor: pointer;
 }
@@ -55,17 +56,17 @@ button:hover { filter: brightness(1.06); }
 #result { margin-top: 24px; }
 .out {
   padding: 16px;
-  border: 1px solid #1f2937;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  background: #0b1220;
+  background: #ffffff;
   display: grid;
   gap: 8px;
 }
 code {
-  background: #0a0f1a;
+  background: #eef2ff;
   padding: 4px 6px;
   border-radius: 6px;
-  color: #93c5fd;
+  color: #1e40af;
 }
 .note {
   color: var(--muted);
