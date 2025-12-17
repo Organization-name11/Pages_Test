@@ -2,7 +2,6 @@
 (() => {
   console.log("[app.js] loaded");
 
-  // 初期化（DOM構築後に開始）
   const start = () => {
     // UMD の存在確認
     if (!window.SpatialId || !window.SpatialId.Space) {
@@ -26,6 +25,10 @@
     const centerEl   = $('center');
     const clearEl    = $('clear');
 
+    const zoomPlusBtn  = document.getElementById('zoom-plus');
+    const zoomMinusBtn = document.getElementById('zoom-minus');
+    const aroundListEl = document.getElementById('around-list');
+
     const { Space } = window.SpatialId;
     let currentSpace = null;
 
@@ -38,6 +41,34 @@
       // 中心座標
       const c = space.center; // {lng, lat, alt}
       centerEl.textContent = `${c.lng.toFixed(6)}, ${c.lat.toFixed(6)}, ${c.alt}`;
+    };
+
+    // 周辺タイルリスト
+    const rowForSpace = (space) => {
+      const div = document.createElement('div');
+      div.className = 'list-item';
+      div.innerHTML = `
+        <div><strong>${space.zfxyStr.replace(/^\//, "")}</strong></div>
+        <div class="mini">zoom=${space.zoom}, tilehash=${space.id}</div>
+      `;
+      return div;
+    };
+
+    const renderAround = (space) => {
+      try {
+        const around = space.surroundings(); // Space[]
+        aroundListEl.innerHTML = '';
+        if (!around || around.length === 0) {
+          aroundListEl.innerHTML = '<div class="mini">周辺がありません</div>';
+          return;
+        }
+        around.forEach(s => {
+          aroundListEl.appendChild(rowForSpace(s));
+        });
+      } catch (e) {
+        console.error(e);
+        aroundListEl.innerHTML = '<div class="mini">周辺の表示でエラーが発生しました</div>';
+      }
     };
 
     // 送信（計算）
@@ -54,6 +85,7 @@
         zfxyEl.textContent = "-";
         tilehashEl.textContent = "-";
         centerEl.textContent = "-";
+        aroundListEl.innerHTML = '<div class="mini">未計算</div>';
         return;
       }
       if (z < 0 || z > 30) {
@@ -64,6 +96,7 @@
       try {
         currentSpace = Space.getSpaceByLocation({ lat, lng, alt: h }, z);
         render(currentSpace);
+        renderAround(currentSpace);
         msgEl.textContent = `計算しました（z=${z}）。`;
       } catch (e) {
         console.error(e);
@@ -71,7 +104,47 @@
         zfxyEl.textContent = "-";
         tilehashEl.textContent = "-";
         centerEl.textContent = "-";
+        aroundListEl.innerHTML = '<div class="mini">未計算</div>';
       }
+    });
+
+    // ズーム +1（中心座標を維持して再計算）
+    zoomPlusBtn?.addEventListener('click', () => {
+      if (!currentSpace) {
+        msgEl.textContent = 'まず入力して「計算」を実行してください。';
+        return;
+      }
+      const c = currentSpace.center;
+      const nextZoom = currentSpace.zoom + 1;
+      if (nextZoom > 30) {
+        msgEl.textContent = 'これ以上ズームを上げられません（最大 30）。';
+        return;
+      }
+      currentSpace = Space.getSpaceByLocation({ lat: c.lat, lng: c.lng, alt: c.alt }, nextZoom);
+      // 入力欄へ反映
+      $('z').value = String(currentSpace.zoom);
+      render(currentSpace);
+      renderAround(currentSpace);
+      msgEl.textContent = `ズームを ${nextZoom} に変更しました。`;
+    });
+
+    // ズーム -1（中心座標を維持して再計算）
+    zoomMinusBtn?.addEventListener('click', () => {
+      if (!currentSpace) {
+        msgEl.textContent = 'まず入力して「計算」を実行してください。';
+        return;
+      }
+      const c = currentSpace.center;
+      const nextZoom = currentSpace.zoom - 1;
+      if (nextZoom < 0) {
+        msgEl.textContent = 'これ以上ズームを下げられません（最小 0）。';
+        return;
+      }
+      currentSpace = Space.getSpaceByLocation({ lat: c.lat, lng: c.lng, alt: c.alt }, nextZoom);
+      $('z').value = String(currentSpace.zoom);
+      render(currentSpace);
+      renderAround(currentSpace);
+      msgEl.textContent = `ズームを ${nextZoom} に変更しました。`;
     });
 
     // クリア
@@ -83,7 +156,8 @@
       zfxyEl.textContent   = "-";
       tilehashEl.textContent = "-";
       centerEl.textContent = "-";
-      msgEl.textContent    = "入力値をクリアしました。";
+      aroundListEl.innerHTML = '<div class="mini">未計算</div>';
+           msgEl.textContent    = "入力値をクリアしました。";
     });
   };
 
@@ -92,4 +166,4 @@
   } else {
     start();
   }
-})();
+})

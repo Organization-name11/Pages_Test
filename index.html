@@ -56,9 +56,24 @@
         <div class="out-line"><strong>中心 (lng, lat, alt):</strong> <code id="center">-</code></div>
       </div>
     </section>
+
+    <!-- ズーム操作 -->
+    <section class="card">
+      <h2 class="section-title">ズーム操作</h2>
+      <div class="actions">
+        <button id="zoom-plus" class="btn">ズームレベル +1</button>
+        <button id="zoom-minus" class="btn">ズームレベル -1</button>
+      </div>
+    </section>
+
+    <!-- 周辺タイル -->
+    <section id="around" class="card">
+      <h2 class="section-title">周辺タイル</h2>
+      <div class="list" id="around-list"><div class="mini">未計算</div></div>
+    </section>
   </main>
 
   <!-- ✅ 読み込み順：UMD（ライブラリ）→ アプリ -->
-  <script src="./ouranos-gex-lib-for-JavaScript/dist/index.js"></script>
-   <script src="./app.js"></script>
+  <  <script src="./ouranos-gex-lib-for-JavaScript/dist/index.js"></script>
+  <script src="./app.js"></script>
 </body>
