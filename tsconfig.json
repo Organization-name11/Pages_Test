@@ -1,4 +1,3 @@
-
 {
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
@@ -6,36 +5,34 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "target": "esnext",
-
     // ---- 型定義の取り込み ----
     "types": [], // Node の型が必要なら ["node"] にして @types/node を導入
-
     // ---- 出力関連（Next.js は基本 noEmit）----
     "sourceMap": true,
-    "declaration": true,       // 型定義出力が不要なら false でもOK（noEmit が true なので実ファイル出力はしません）
+    "declaration": true, // 型定義出力が不要なら false でもOK（noEmit が true なので実ファイル出力はしません）
     "declarationMap": true,
-
     // ---- 厳格な型チェック ----
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-
     // ---- JSX / モジュール周り ----
-    "jsx": "react-jsx",            // Next のデフォルトは "preserve" ですが react-jsx でも問題ありません
-    "verbatimModuleSyntax": true,  // import 形に厳密（default import が効かない場合あり）
+    "jsx": "preserve", // Next のデフォルトは "preserve" ですが react-jsx でも問題ありません
+    "verbatimModuleSyntax": true, // import 形に厳密（default import が効かない場合あり）
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-
     // ---- ランタイム/型解決 ----
     "skipLibCheck": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
-    "noEmit": true,                // Next で TS からの出力は行わない
+    "noEmit": true, // Next で TS からの出力は行わない
     "incremental": true,
-    "esModuleInterop": true,       // CJS interop（verbatimModuleSyntax と衝突する場合は import 形を調整）
+    "esModuleInterop": true, // CJS interop（verbatimModuleSyntax と衝突する場合は import 形を調整）
     "resolveJsonModule": true
-
     // ※ 以前の "moduleResolution": "node" は TS5 で非推奨。bundler へ更新済み。
     // ※ NodeNext を使う場合は "module": "nodenext", "moduleResolution": "NodeNext" に揃える。
   },
@@ -46,6 +43,6 @@
     "**/*.tsx"
   ],
   "exclude": [
-       "node_modules"
+    "node_modules"
   ]
 }
