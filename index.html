@@ -15,19 +15,19 @@ cat > index.html <<'EOF'
     <form id="calc-form" class="grid">
       <label>
         緯度 (lat, °)
-        <input type="number" id="lat" step="any" placeholder="例: 35.681236" required>
+        <input type="number" id="lat" step="any" placeholder="例: 35.681236" required />
       </label>
       <label>
         経度 (lng, °)
-        <input type="number" id="lng" step="any" placeholder="例: 139.767125" required>
+        <input type="number" id="lng" step="any" placeholder="例: 139.767125" required />
       </label>
       <label>
         ズームレベル (z)
-        <input type="number" id="z" min="0" max="30" step="1" value="25" required>
+        <input type="number" id="z" min="0" max="30" step="1" value="25" required />
       </label>
       <label>
         高さ (h, m)
-        <input type="number" id="h" step="any" value="0" required>
+        <input type="number" id="h" step="any" value="0" required />
       </label>
 
       <button type="submit" id="btn">計算</button>
@@ -47,4 +47,5 @@ cat > index.html <<'EOF'
 
   <script src="app.js"></script>
 </body>
-</</html>
+</html>
+EOF
