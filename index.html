@@ -5,7 +5,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>空間IDお試し環境</title>
-  style.css
+  <!-- ✅ 正しい CSS リンク -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="container">
@@ -22,17 +23,14 @@
         <span class="label">緯度 (度)</span>
         <input type="number" id="lat" step="any" placeholder="例: 35.681236" required />
       </label>
-
       <label class="field">
         <span class="label">経度 (度)</span>
         <input type="number" id="lng" step="any" placeholder="例: 139.767125" required />
       </label>
-
       <label class="field">
         <span class="label">ズームレベル</span>
         <input type="number" id="z" min="0" max="30" step="1" value="25" required />
       </label>
-
       <label class="field">
         <span class="label">高さ (m)</span>
         <input type="number" id="h" step="any" value="0" required />
@@ -74,7 +72,7 @@
       </div>
     </section>
 
-    <!-- ✅ 親・子の並び（見出しなし／ズーム操作の直後に配置） -->
+    <!-- 親・子（見出しなし、ズームの直後） -->
     <section id="hierarchy" class="card">
       <div class="grid cols-2">
         <div>
@@ -88,7 +86,7 @@
       </div>
     </section>
 
-    <!-- 周辺タイル（この位置は据え置き） -->
+    <!-- 周辺タイル -->
     <section id="around" class="card">
       <h2 class="section-title">周辺タイル</h2>
       <div class="list" id="around-list"><div class="mini">未計算</div></div>
@@ -96,6 +94,6 @@
   </main>
 
   <!-- ✅ 読み込み順：UMD（ライブラリ）→ アプリ -->
-   ./ouranos-gex-lib-for-JavaScript/dist/index.js</script>
-  ./app.js</script>
+  <script  <script src="./ouranos-gex-lib-for-JavaScript/dist/index.js"></script>
+  <script src="./app.js"></script>
 </body>
