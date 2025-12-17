@@ -39,13 +39,12 @@
     function rowForSpace(space) {
       var div = document.createElement('div');
       div.className = 'list-item';
-      var strong = document.createElement('div');
-      strong.innerHTML = "<strong>" + space.zfxyStr.replace(/^\//, "") + "</strong>";
-      var meta = document.createElement('div');
-      meta.className = 'mini';
-      meta.textContent = "zoom=" + space.zoom + ", tilehash=" + space.id;
-      div.appendChild(strong);
-      div.appendChild(meta);
+
+      var left = document.createElement('div');
+      left.innerHTML = "<div><strong>" + space.zfxyStr.replace(/^\//, "") + "</strong></div>"
+                     + "<div class='mini'>zoom=" + space.zoom + ", tilehash=" + space.id + "</div>";
+
+      div.appendChild(left);
       return div;
     }
 
@@ -129,4 +128,90 @@
         tilehashEl.textContent = "-";
         centerEl.textContent = "-";
         aroundListEl.innerHTML   = '<div class="mini">未計算</div>';
-      }})}})
+        parentListEl.innerHTML   = '<div class="mini">未計算</div>';
+        childrenListEl.innerHTML = '<div class="mini">未計算</div>';
+        return;
+      }
+      if (z < 0 || z > 30) {
+        msgEl.textContent = "ズームレベルは 0〜30 の範囲で入力してください。";
+        return;
+      }
+
+      try {
+        currentSpace = Space.getSpaceByLocation({ lat: lat, lng: lng, alt: h }, z);
+        renderAll(currentSpace);
+      } catch (e) {
+        console.error(e);
+        msgEl.textContent = "計算中にエラーが発生しました。入力値とズームを確認してください。";
+        zfxyEl.textContent = "-";
+        tilehashEl.textContent = "-";
+        centerEl.textContent = "-";
+        aroundListEl.innerHTML   = '<div class="mini">未計算</div>';
+        parentListEl.innerHTML   = '<div class="mini">未計算</div>';
+        childrenListEl.innerHTML = '<div class="mini">未計算</div>';
+      }
+    });
+
+    // ズーム +1（中心座標維持）
+    if (zoomPlusBtn) {
+      zoomPlusBtn.addEventListener('click', function() {
+        if (!currentSpace) {
+          msgEl.textContent = 'まず入力して「計算」を実行してください。';
+          return;
+        }
+        var c = currentSpace.center;
+        var nextZoom = currentSpace.zoom + 1;
+        if (nextZoom > 30) {
+          msgEl.textContent = 'これ以上ズームを上げられません（最大 30）。';
+          return;
+        }
+        currentSpace = Space.getSpaceByLocation({ lat: c.lat, lng: c.lng, alt: c.alt }, nextZoom);
+        $('z').value = String(currentSpace.zoom);
+        renderAll(currentSpace);
+        msgEl.textContent = "ズームを " + nextZoom + " に変更しました。";
+      });
+    }
+
+    // ズーム -1（中心座標維持）
+    if (zoomMinusBtn) {
+      zoomMinusBtn.addEventListener('click', function() {
+        if (!currentSpace) {
+          msgEl.textContent = 'まず入力して「計算」を実行してください。';
+          return;
+        }
+        var c = currentSpace.center;
+        var nextZoom = currentSpace.zoom - 1;
+        if (nextZoom < 0) {
+          msgEl.textContent = 'これ以上ズームを下げられません（最小 0）。';
+          return;
+        }
+        currentSpace = Space.getSpaceByLocation({ lat: c.lat, lng: c.lng, alt: c.alt }, nextZoom);
+        $('z').value = String(currentSpace.zoom);
+        renderAll(currentSpace);
+        msgEl.textContent = "ズームを " + nextZoom + " に変更しました。";
+      });
+    }
+
+    // クリア
+    clearEl.addEventListener('click', function() {
+      $('lat').value = "";
+      $('lng').value = "";
+      $('z').value   = "25";
+      $('h').value   = "0";
+      zfxyEl.textContent   = "-";
+      tilehashEl.textContent = "-";
+      centerEl.textContent = "-";
+      aroundListEl.innerHTML   = '<div class="mini">未計算</div>';
+      parentListEl.innerHTML   = '<div class="mini">未計算</div>';
+      childrenListEl.innerHTML = '<div class="mini">未計算</div>';
+      msgEl.textContent    = "入力値をクリアしました。";
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+``
