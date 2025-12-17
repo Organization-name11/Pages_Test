@@ -5,7 +5,7 @@
   const start = () => {
     // UMD の存在確認
     if (!window.SpatialId || !window.SpatialId.Space) {
-      console.error("SpatialId (UMD) が読み込まれていません。index.html の <script> 読み込み順を確認してください。");
+      console.error("SpatialId (UMD) が読み込まれていません。index.html の <script> 読み込み順とパスを確認してください。");
       const msgEl = document.getElementById('msg');
       if (msgEl) msgEl.textContent = "ライブラリが読み込めていません。ページのスクリプト設定をご確認ください。";
       return;
@@ -95,7 +95,6 @@
     };
 
     // ------- GeoJSON 正規化・描画 -------
-    // FeatureCollection → 最初の Feature、Geometry → Feature 化
     const normalizeFeature = (geo) => {
       if (!geo) return null;
       if (geo.type === 'FeatureCollection') {
@@ -106,14 +105,12 @@
       return null;
     };
 
-    // Polygon/MultiPolygon から最大リング（外周）を返す
     const largestRingFromGeometry = (geometry) => {
       if (!geometry) return null;
 
       if (geometry.type === 'Polygon') {
         const rings = geometry.coordinates || [];
         if (!rings.length) return null;
-        // 外周は通常 index=0、ただし保険で頂点数の大きいものを選ぶ
         return rings.sort((a, b) => (b?.length || 0) - (a?.length || 0))[0];
       }
 
@@ -130,7 +127,7 @@
         return best;
       }
 
-      return null; // その他の geometry type は未対応（LineStringなど）
+      return null;
     };
 
     const bboxFromRing = (ring) => {
@@ -149,7 +146,6 @@
       return { minLng, maxLng, minLat, maxLat };
     };
 
-    // 線形マッピング（bbox → viewBox 0..400、paddingあり）
     const projectToViewBox = (lng, lat, bbox, width = 400, height = 400, padding = 12) => {
       const { minLng, maxLng, minLat, maxLat } = bbox;
       const dx = (maxLng - minLng);
@@ -303,7 +299,7 @@
       currentSpace = Space.getSpaceByLocation({ lat: c.lat, lng: c.lng, alt: c.alt }, nextZoom);
       syncInputsFromSpace(currentSpace);
       renderAll(currentSpace);
-       });
+    });
   };
 
   if (document.readyState === 'loading') {

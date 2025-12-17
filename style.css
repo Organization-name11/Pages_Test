@@ -15,9 +15,7 @@
   --chip-bg: #eef3ff;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -26,140 +24,56 @@ body {
   margin: 0;
 }
 
-.container {
-  max-width: 960px;
-  margin: 24px auto;
-  padding: 0 16px;
-}
+.container { max-width: 960px; margin: 24px auto; padding: 0 16px; }
 
-.header h1 {
-  margin: 0 0 8px;
-}
+.header h1 { margin: 0 0 8px; }
+.header .sub { color: var(--muted); margin: 0 0 16px; }
 
-.header .sub {
-  color: var(--muted);
-  margin: 0 0 16px;
-}
+.stack { display: grid; gap: 12px; }
 
-.stack {
-  display: grid;
-  gap: 12px;
-}
-
-.field .label {
-  display: block;
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-
+.field .label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
 .field input {
-  width: 100%;
-  padding: 10px 12px;
+  width: 100%; padding: 10px 12px;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 8px; font-size: 14px;
 }
 
-.actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
 .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  background: var(--btn-bg);
-  color: var(--btn-fg);
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  transition: background 0.15s ease, box-shadow 0.15s ease;
+  display:inline-flex; align-items:center; gap:6px;
+  padding: 10px 14px; border-radius: 8px; border: 1px solid transparent;
+  background: var(--btn-bg); color: var(--btn-fg); font-weight: 600;
+  letter-spacing: .01em; cursor: pointer; transition: background .15s ease, box-shadow .15s ease;
 }
+.btn:hover { background: var(--btn-bg-hover); box-shadow: 0 2px 8px rgba(36, 87, 214, 0.25); }
+.btn.secondary { background: var(--btn-sec-bg); }
+.btn.secondary:hover { background: var(--btn-sec-hover); box-shadow: 0 2px 8px rgba(82, 88, 98, 0.25); }
 
-.btn:hover {
-  background: var(--btn-bg-hover);
-  box-shadow: 0 2px 8px rgba(36, 87, 214, 0.25);
-}
-
-.btn.secondary {
-  background: var(--btn-sec-bg);
-}
-
-.btn.secondary:hover {
-  background: var(--btn-sec-hover);
-  box-shadow: 0 2px 8px rgba(82, 88, 98, 0.25);
-}
-
-.msg {
-  min-height: 20px;
-  color: var(--muted);
-}
+.msg { min-height: 20px; color: var(--muted); }
 
 .card {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px;
-  margin-top: 18px;
-  background: #fafbfc;
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px; margin-top: 18px; background: #fafbfc;
 }
 
-.out {
-  display: grid;
-  gap: 8px;
-}
+.out { display: grid; gap: 8px; }
+.out-line code { background: var(--chip-bg); padding: 3px 8px; border-radius: 8px; }
 
-.out-line code {
-  background: var(--chip-bg);
-  padding: 3px 8px;
-  border-radius: 8px;
-}
+.grid { display: grid; gap: 12px; }
+.grid.cols-2 { grid-template-columns: 1fr 1fr; }
 
-.grid {
-  display: grid;
-  gap: 12px;
-}
-
-.grid.cols-2 {
-  grid-template-columns: 1fr 1fr;
-}
-
-.list {
-  display: grid;
-  gap: 6px;
-}
-
+.list { display: grid; gap: 6px; }
 .list-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  border: 1px dashed var(--border);
-  border-radius: 10px;
-  padding: 10px 12px;
-  background: #ffffff;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  border: 1px dashed var(--border); border-radius: 10px; padding: 10px 12px; background: #fff;
 }
 
-.mini {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.section-title {
-  margin: 6px 0 10px;
-  font-size: 16px;
-}
+.mini { font-size: 12px; color: var(--muted); }
+.section-title { margin: 6px 0 10px; font-size: 16px; }
 
 /* ==== GeoJSONプレビュー（SVG） ==== */
-.preview-panel {
-  display: grid;
-  gap: 10px;
-}
+.preview-panel { display: grid; gap: 10px; }
 
 .preview-svg {
   border: 1px solid var(--border);
@@ -167,9 +81,7 @@ body {
   background: #ffffff;
 }
 
-.preview-bg {
-  fill: #f5f8ff;
-}
+.preview-bg { fill: #f5f8ff; }
 
 .preview-frame {
   fill: none;
@@ -185,7 +97,7 @@ body {
 }
 
 .preview-center {
-   fill: #ff4d4f;
+  fill: #ff4d4f;
   stroke: #b3261e;
   stroke-width: 1;
 }
