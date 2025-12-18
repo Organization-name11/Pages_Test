@@ -5,8 +5,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>空間IDお試し環境</title>
-  <!-- ✅ 正しい CSS リンク -->
-  <link rel="stylesheet" href="style.css" />
+  <!-- CSS は相対パス -->
+  ./style.css
 </head>
 <body>
   <main class="container">
@@ -44,7 +44,7 @@
       <p id="msg" class="msg" aria-live="polite"></p>
     </form>
 
-    <!-- 結果（文字を大きく＆z/f/x/y 強調） -->
+    <!-- 結果 -->
     <section id="result" class="card result-card">
       <h2 class="section-title">結果</h2>
       <div class="out result-out">
@@ -72,7 +72,7 @@
       </div>
     </section>
 
-    <!-- 親・子（見出しなし、ズームの直後） -->
+    <!-- 親・子 -->
     <section id="hierarchy" class="card">
       <div class="grid cols-2">
         <div>
@@ -94,6 +94,6 @@
   </main>
 
   <!-- ✅ 読み込み順：UMD（ライブラリ）→ アプリ -->
-  <script  <script src="./ouranos-gex-lib-for-JavaScript/dist/index.js"></script>
-  <script src="./app.js"></script>
-</body>
+  ./lib/index.umd.js</script>
+  ./app.js</script>
+</</body>
