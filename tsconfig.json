@@ -6,16 +6,13 @@
     "moduleResolution": "Node",
     "lib": ["ES2020", "DOM"],
     "strict": true,
-    "strictPropertyInitialization": false,   // ★ 一時的にOFF（後でコードで解決してONに戻せます）
+    "strictPropertyInitialization": false,
     "declaration": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
-
-    // ★ Rollup出力ディレクトリ配下に合わせる（エラー回避）
-    "outDir": "./docs/lib/.tsbuild"
+    "resolveJsonModule": true
+    /* outDir は指定しない（@rollup/plugin-typescript の制約回避） */
   },
-  "include": [
-       "ouranos-gex-lib-for-JavaScript/src/**/*"
-  ]
+  "include": ["ouranos-gex-lib-for-JavaScript/src/**/*"],
+  "exclude": ["node_modules", "docs", "**/*.test.ts"]
 }
