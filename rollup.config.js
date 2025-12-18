@@ -1,10 +1,7 @@
 
-// rollup.config.js
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
-// ❌ NG: import { terser } from '@rollup/plugin-terser';
-// ✅ OK:
 import terser from '@rollup/plugin-terser';
 
 export default {
@@ -18,7 +15,7 @@ export default {
   plugins: [
     resolve({ browser: true }),
     commonjs(),
-    typescript({ tsconfig: './tsconfig.json' }),
+    typescript({ tsconfig: './tsconfig.json' }), // ← ルートの tsconfig を参照
     terser()
   ]
 };
