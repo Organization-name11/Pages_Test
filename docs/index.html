@@ -4,9 +4,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link href=/workspaces/Pages_Test/docs/style.css>
   <title>空間IDお試し環境</title>
 
+  <!-- ✅ CSS は ... -->
+  ./style.css
 </head>
 <body>
   <main class="container">
@@ -93,8 +94,8 @@
     </section>
   </main>
 
-  <!-- ✅ 読み込み順：UMD（ライブラリ）→ アプリ -->
+  <!-- ✅ 読み込み順：UMD（ライブラリ）→ アプリ。defer で後段実行 -->
   ./lib/index.umd.js</script>
   ./app.js</script>
 </body>
-</
+</html>
