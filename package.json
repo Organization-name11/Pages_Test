@@ -1,15 +1,23 @@
+
 {
+  "name": "pages-test",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "rollup -c -w"
+  },
+  "dependencies": {
+    "@turf/bbox": "^7.3.1",
+    "@turf/boolean-intersects": "^7.3.1"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-typescript": "^12.3.0",
+    "@types/geojson": "^7946.0.14",
     "rollup": "^4.53.5",
     "terser": "^5.44.1",
     "typescript": "^5.9.3"
-  },
-  "dependencies": {
-    "@turf/bbox": "^7.3.1",
-    "@turf/boolean-intersects": "^7.3.1",
-    "geojson": "^0.5.0"
   }
 }
