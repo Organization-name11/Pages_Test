@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>空間IDお試し環境</title>
 
-  <!-- ✅ CSS は相対パス -->
+  <!-- ✅ CSS は <link> タグで相対パス指定 -->
   ./style.css
 </head>
 <body>
@@ -62,39 +62,3 @@
           <code id="center" class="result-code-md">-</code>
         </div>
       </div>
-    </section>
-
-    <!-- ズーム操作 -->
-    <section class="card">
-      <h2 class="section-title">ズーム操作</h2>
-      <div class="actions">
-        <button id="zoom-plus" class="btn">ズームレベル +1</button>
-        <button id="zoom-minus" class="btn">ズームレベル -1</button>
-      </div>
-    </section>
-
-    <!-- 親・子 -->
-    <section id="hierarchy" class="card">
-      <div class="grid cols-2">
-        <div>
-          <h3 class="mini">親</h3>
-          <div class="list" id="parent-list"><div class="mini">未計算</div></div>
-        </div>
-        <div>
-          <h3 class="mini">子</h3>
-          <div class="list" id="children-list"><div class="mini">未計算</div></div>
-        </div>
-      </div>
-       </section>
-
-    <!-- 周辺タイル -->
-    <section id="around" class="card">
-      <h2 class="section-title">周辺タイル</h2>
-      <div class="list" id="around-list"><div class="mini">未計算</div></div>
-    </section>
-  </main>
-
-  <!-- ✅ 読み込み順：UMD（ライブラリ）→ アプリ -->
-  ./lib/index.umd.js</script>
-  ./app.js</script>
-</body>
