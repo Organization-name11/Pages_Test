@@ -3,6 +3,8 @@ import { ZFXYTile, getChildren, getParent, ZFXY_ROOT_TILE } from "./zfxy";
 
 /**
  * tilehash を ZFXYTile に変換
+ * - 先頭の '-' は f の符号
+ * - 残りは 1..N の数字。各桁が親タイルの children のインデックス(1-based)
  */
 export function parseZFXYTilehash(th: string): ZFXYTile {
   if (th == null) {
@@ -15,24 +17,16 @@ export function parseZFXYTilehash(th: string): ZFXYTile {
   // 先頭の符号処理
   if (s.startsWith("-")) {
     negativeF = true;
-    s = s.slice(1);                  // ← '-' を取り除いた残りが s
+    s = s.slice(1);
   }
 
-  // 入力が空の場合は仕様に合わせて決定する
-  // 1) ルートへフォールバックするなら以下：
-  // if (s.length === 0) {
-  //   const root = { ...ZFXY_ROOT_TILE };
-  //   if (negativeF) root.f = -Math.abs(root.f);
-  //   return root;                   // ★ ここで確実に return
-  // }
-
-  // 2) 空を許容しないならエラーにする：
+  // 空はエラー（仕様に合わせてフォールバックにしても可）
   if (s.length === 0) {
     throw new Error("parseZFXYTilehash: '-' のみ、または空文字です");
   }
 
   // ルートから降りる
-  let children = getChildren();      // ルートの子
+  let children = getChildren();            // ルートの子
   let lastChild: ZFXYTile | null = null;
 
   for (const ch of s) {
@@ -45,16 +39,57 @@ export function parseZFXYTilehash(th: string): ZFXYTile {
   }
 
   if (!lastChild) {
-    // ここに到達するのは s.length === 0 のケースだが、上で弾いているため通常は来ない
-    // フォールバックする仕様にするなら:
+    // ここに来るのは通常 s.length === 0 のときだが、上で弾いている
+    // 仕様でフォールバックにするなら以下：
     // lastChild = { ...ZFXY_ROOT_TILE };
-    // それでも return する
     throw new Error("parseZFXYTilehash: lastChild が得られませんでした");
   }
 
+  // 符号処理
   if (negativeF) {
     lastChild.f = -Math.abs(lastChild.f);
   }
 
-  return lastChild;                  // ★ 正常系は必ず return
+  return lastChild;
+}
+
+/**
+ * ZFXYTile から tilehash を生成
+ * - 子の位置を 1..N の数字で表す
+ * - f の符号は先頭の '-' で表現
+ */
+export function generateTilehash(tile: ZFXYTile): string {
+  let { f, x, y, z } = tile;
+  const originalF = f;
+  let out = "";
+
+  while (z > 0) {
+    const thisTile: ZFXYTile = { f: Math.abs(f), x, y, z };
+    const parent = getParent(thisTile);
+    const childrenOfParent = getChildren(parent);
+
+    const positionInParent = childrenOfParent.findIndex(
+      (child) =>
+        child.f === Math.abs(f) &&
+        child.x === x &&
+        child.y === y &&
+        child.z === z
+    );
+
+    if (positionInParent < 0) {
+      // データの不整合（親の子配列に該当タイルが見つからない）
+      throw new Error("generateTilehash: 親の children に一致する子が見つかりません");
+    }
+
+    out = String(positionInParent + 1) + out;
+
+    // 一段親へ遡る
+    f = parent.f;
+    x = parent.x;
+    y = parent.y;
+    z = parent.z;
+  }
+
+  // 先頭の符号
+  return (originalF < 0 ? "-" : "") + out;
 }
